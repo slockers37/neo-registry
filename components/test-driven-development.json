@@ -8,7 +8,8 @@
       "files": [
         "SKILL.md",
         "testing-anti-patterns.md"
-      ]
+      ],
+      "dependencies": []
     }
   },
   "dist-tags": {

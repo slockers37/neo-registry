@@ -8,7 +8,8 @@
       "files": [
         "SKILL.md",
         "Workflows/PodcastGeneration.md"
-      ]
+      ],
+      "dependencies": []
     }
   },
   "dist-tags": {

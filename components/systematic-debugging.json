@@ -12,7 +12,8 @@
         "defense-in-depth.md",
         "find-polluter.sh",
         "root-cause-tracing.md"
-      ]
+      ],
+      "dependencies": []
     }
   },
   "dist-tags": {

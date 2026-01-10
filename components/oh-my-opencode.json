@@ -11,6 +11,9 @@
           "npm:oh-my-opencode@2.14.0"
         ]
       }
+    },
+    "1.0.0": {
+      "dependencies": []
     }
   },
   "dist-tags": {

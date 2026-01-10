@@ -11,6 +11,9 @@
           "npm:@franlol/opencode-md-table-formatter@0.0.3"
         ]
       }
+    },
+    "1.0.0": {
+      "dependencies": []
     }
   },
   "dist-tags": {

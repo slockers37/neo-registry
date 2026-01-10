@@ -31,7 +31,8 @@
         "workflows/get-guidance.md",
         "workflows/upgrade-to-router.md",
         "workflows/verify-skill.md"
-      ]
+      ],
+      "dependencies": []
     }
   },
   "dist-tags": {

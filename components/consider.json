@@ -18,7 +18,8 @@
         "consider/second-order.md",
         "consider/swot.md",
         "consider/via-negativa.md"
-      ]
+      ],
+      "dependencies": []
     }
   },
   "dist-tags": {

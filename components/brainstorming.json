@@ -7,7 +7,8 @@
       "description": "Pre-implementation thinking and requirements exploration",
       "files": [
         "SKILL.md"
-      ]
+      ],
+      "dependencies": []
     }
   },
   "dist-tags": {

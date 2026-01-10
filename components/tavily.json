@@ -15,7 +15,8 @@
             "url": "https://mcp.tavily.com/mcp"
           }
         }
-      }
+      },
+      "dependencies": []
     }
   },
   "dist-tags": {
