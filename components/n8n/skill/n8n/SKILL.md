@@ -1,7 +1,6 @@
 ---
 name: n8n
-description: Interact with n8n workflows via MCP - list, execute, and manage automations.
-argument-hint: Use for workflow automation, triggering n8n workflows, and managing automation tasks.
+description: Interact with n8n workflows via MCP - list, execute, and manage automations. Use for workflow automation and triggering n8n workflows.
 mcp:
   n8n:
     command: npx
@@ -13,47 +12,69 @@ mcp:
       N8N_API_KEY: ${N8N_API_KEY}
 ---
 
-# n8n Workflow Automation
+<objective>
+Manage and trigger n8n automation workflows - list workflows, execute them with data, and monitor executions.
+</objective>
 
-Integration with n8n self-hosted automation platform via MCP.
+<prerequisites>
+Set environment variables before use:
+```bash
+export N8N_API_URL=https://your-n8n-instance.com/api/v1
+export N8N_API_KEY=your-api-key-from-n8n-settings
+```
+</prerequisites>
 
-## Prerequisites
-Set environment variables:
-- `N8N_API_URL`: Your n8n instance URL
-- `N8N_API_KEY`: API key from n8n settings
+<tools>
 
-## Usage
-
-### List Workflows
+## list_workflows
+List all workflows in your n8n instance.
 ```
 skill_mcp(mcp_name="n8n", tool_name="list_workflows")
 ```
 
-### Get Workflow Details
+## get_workflow
+Get details of a specific workflow.
 ```
 skill_mcp(mcp_name="n8n", tool_name="get_workflow", arguments='{"id": "workflow-id"}')
 ```
 
-### Execute Workflow
+## execute_workflow
+Execute a workflow with optional input data.
 ```
 skill_mcp(mcp_name="n8n", tool_name="execute_workflow", arguments='{"id": "workflow-id", "data": {"key": "value"}}')
 ```
 
-### Get Executions
+| Parameter | Purpose |
+|-----------|---------|
+| `id` | Workflow ID to execute |
+| `data` | Input data passed to workflow (optional) |
+
+## get_executions
+Get recent executions for a workflow.
 ```
 skill_mcp(mcp_name="n8n", tool_name="get_executions", arguments='{"workflow_id": "...", "limit": 10}')
 ```
 
-### Activate/Deactivate Workflow
+## activate_workflow / deactivate_workflow
+Toggle workflow active state.
 ```
 skill_mcp(mcp_name="n8n", tool_name="activate_workflow", arguments='{"id": "workflow-id"}')
 skill_mcp(mcp_name="n8n", tool_name="deactivate_workflow", arguments='{"id": "workflow-id"}')
 ```
 
-## Common Use Cases
+</tools>
 
+<common_use_cases>
 | Task | Approach |
 |------|----------|
 | Trigger automation | `execute_workflow` with input data |
-| Check workflow status | `get_executions` |
-| Debug failed runs | `get_execution` with execution ID |
+| Check workflow status | `get_executions` to see recent runs |
+| Debug failed runs | `get_executions` then inspect specific execution |
+| Enable/disable automation | `activate_workflow` / `deactivate_workflow` |
+</common_use_cases>
+
+<success_criteria>
+- Workflow list returns without auth errors
+- Workflow execution starts and returns execution ID
+- Executions show status (success/failed/running)
+</success_criteria>

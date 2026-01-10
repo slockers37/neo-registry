@@ -1,57 +1,81 @@
 ---
 name: notebooklm
-description: Tools for interacting with Google NotebookLM (Research, Studio, Chat) via MCP.
-argument-hint: Use for all NotebookLM operations including research, podcast generation, and notebook management.
+description: Tools for interacting with Google NotebookLM (Research, Studio, Chat) via MCP. Use for research, podcast generation, and notebook management.
 mcp:
   notebooklm:
     command: notebooklm-mcp
 ---
 
-# NotebookLM Skill
+<objective>
+Manage Google NotebookLM notebooks - create, add sources, generate podcasts, conduct research, and chat with your knowledge base.
+</objective>
 
-Integration with Google NotebookLM via MCP.
+<prerequisites>
+The `notebooklm-mcp` command must be installed and authenticated:
+```bash
+npm install -g notebooklm-mcp
+notebooklm-mcp auth  # One-time authentication
+```
+</prerequisites>
 
-## Usage
+<tools>
 
-### List Notebooks
+## list_notebooks
+List all notebooks in your account.
 ```
 skill_mcp(mcp_name="notebooklm", tool_name="list_notebooks")
 ```
 
-### Create Notebook
+## create_notebook
+Create a new notebook.
 ```
 skill_mcp(mcp_name="notebooklm", tool_name="create_notebook", arguments='{"title": "My Research"}')
 ```
 
-### Add Source
+## add_source
+Add a source to a notebook.
 ```
 skill_mcp(mcp_name="notebooklm", tool_name="add_source", arguments='{"notebook_id": "...", "url": "https://..."}')
 ```
 
-### Generate Podcast
+| Parameter | Purpose |
+|-----------|---------|
+| `notebook_id` | Target notebook ID |
+| `url` | URL to ingest (articles, docs, etc.) |
+
+## generate_audio_overview
+Generate a podcast from notebook content.
 ```
 skill_mcp(mcp_name="notebooklm", tool_name="generate_audio_overview", arguments='{"notebook_id": "..."}')
 ```
 
-### Deep Research
+## research
+Conduct deep research using notebook as knowledge base.
 ```
-skill_mcp(mcp_name="notebooklm", tool_name="research", arguments='{"query": "topic", "notebook_id": "..."}')
+skill_mcp(mcp_name="notebooklm", tool_name="research", arguments='{"query": "topic to research", "notebook_id": "..."}')
 ```
 
-### Chat with Notebook
+## chat
+Chat with notebook content using RAG.
 ```
 skill_mcp(mcp_name="notebooklm", tool_name="chat", arguments='{"notebook_id": "...", "message": "What are the key takeaways?"}')
 ```
 
-## Capabilities
+</tools>
 
+<capabilities>
 | Feature | Description |
 |---------|-------------|
-| **Manage Notebooks** | Create, list, organize |
-| **Add Sources** | URLs, text, Google Drive |
-| **Generate Content** | Podcasts, videos, slides |
-| **Deep Research** | Research agent |
-| **Chat** | RAG-powered Q&A |
+| **Manage Notebooks** | Create, list, organize research notebooks |
+| **Add Sources** | Ingest URLs, text, Google Drive files |
+| **Generate Content** | Podcasts, videos, slides from sources |
+| **Deep Research** | AI research agent for information gathering |
+| **Chat** | RAG-powered Q&A with your sources |
+</capabilities>
 
-## Workflows
-For podcast generation: `Workflows/PodcastGeneration.md`
+<success_criteria>
+- Notebook operations complete without errors
+- Sources are ingested and searchable
+- Podcast generation starts (may take minutes to complete)
+- Chat returns relevant answers from sources
+</success_criteria>
