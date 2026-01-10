@@ -2,6 +2,8 @@
   "name": "neo",
   "namespace": "neo",
   "version": "1.0.0",
+  "ocx": "1.0.16",
+  "opencode": "1.1.0",
   "author": "Neo",
   "components": [
     { "name": "oh-my-opencode", "type": "ocx:plugin", "description": "Enhanced OpenCode with agents, MCPs, tools" },
