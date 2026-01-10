@@ -6,8 +6,8 @@
       "type": "ocx:skill",
       "description": "Google NotebookLM integration for research and podcasts",
       "files": [
-        "SKILL.md",
-        "Workflows/PodcastGeneration.md"
+        "skill/notebooklm/SKILL.md",
+        "skill/notebooklm/Workflows/PodcastGeneration.md"
       ],
       "dependencies": []
     }

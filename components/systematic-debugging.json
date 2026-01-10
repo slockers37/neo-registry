@@ -6,12 +6,12 @@
       "type": "ocx:skill",
       "description": "Structured debugging methodology when stuck",
       "files": [
-        "SKILL.md",
-        "condition-based-waiting.md",
-        "condition-based-waiting-example.ts",
-        "defense-in-depth.md",
-        "find-polluter.sh",
-        "root-cause-tracing.md"
+        "skill/systematic-debugging/SKILL.md",
+        "skill/systematic-debugging/condition-based-waiting.md",
+        "skill/systematic-debugging/condition-based-waiting-example.ts",
+        "skill/systematic-debugging/defense-in-depth.md",
+        "skill/systematic-debugging/find-polluter.sh",
+        "skill/systematic-debugging/root-cause-tracing.md"
       ],
       "dependencies": []
     }

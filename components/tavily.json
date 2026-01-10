@@ -6,7 +6,7 @@
       "type": "ocx:skill",
       "description": "Web search and content extraction via Tavily API",
       "files": [
-        "SKILL.md"
+        "skill/tavily/SKILL.md"
       ],
       "dependencies": []
     }

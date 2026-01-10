@@ -6,7 +6,7 @@
       "type": "ocx:skill",
       "description": "Create hierarchical project plans",
       "files": [
-        "SKILL.md"
+        "skill/writing-plans/SKILL.md"
       ],
       "dependencies": []
     }
