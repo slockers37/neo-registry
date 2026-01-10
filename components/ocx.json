@@ -1,0 +1,24 @@
+{
+  "name": "ocx",
+  "dist-tags": { "latest": "1.0.0" },
+  "versions": {
+    "1.0.0": {
+      "name": "ocx",
+      "type": "ocx:skill",
+      "description": "Manage OpenCode components - install, registries, ghost mode",
+      "files": [
+        "skill/ocx/SKILL.md",
+        "skill/ocx/workflows/manage-components.md",
+        "skill/ocx/workflows/configure-registries.md",
+        "skill/ocx/workflows/ghost-mode.md",
+        "skill/ocx/workflows/create-registry.md",
+        "skill/ocx/workflows/troubleshoot.md",
+        "skill/ocx/references/cli-commands.md",
+        "skill/ocx/references/registry-format.md",
+        "skill/ocx/references/ghost-mode.md",
+        "skill/ocx/references/component-types.md"
+      ],
+      "dependencies": []
+    }
+  }
+}
