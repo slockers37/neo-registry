@@ -6,17 +6,15 @@
       "type": "ocx:plugin",
       "description": "Enhanced OpenCode experience with agents, MCPs, and tools",
       "files": [],
+      "dependencies": [],
       "opencode": {
         "plugin": [
           "npm:oh-my-opencode@2.14.0"
         ]
       }
-    },
-    "1.0.0": {
-      "dependencies": []
     }
   },
   "dist-tags": {
-    "latest": "1.0.0"
+    "latest": "2.14.0"
   }
 }

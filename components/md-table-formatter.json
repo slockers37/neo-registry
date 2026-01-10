@@ -6,17 +6,15 @@
       "type": "ocx:plugin",
       "description": "Markdown table formatting plugin",
       "files": [],
+      "dependencies": [],
       "opencode": {
         "plugin": [
           "npm:@franlol/opencode-md-table-formatter@0.0.3"
         ]
       }
-    },
-    "1.0.0": {
-      "dependencies": []
     }
   },
   "dist-tags": {
-    "latest": "1.0.0"
+    "latest": "0.0.3"
   }
 }
