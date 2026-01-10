@@ -1,0 +1,38 @@
+{
+  "name": "create-agent-skills",
+  "dist-tags": { "latest": "1.0.0" },
+  "versions": {
+    "1.0.0": {
+      "name": "create-agent-skills",
+      "type": "ocx:skill",
+      "description": "Create and refine OpenCode skills",
+      "files": [
+        "SKILL.md",
+        "references/api-security.md",
+        "references/be-clear-and-direct.md",
+        "references/common-patterns.md",
+        "references/core-principles.md",
+        "references/executable-code.md",
+        "references/iteration-and-testing.md",
+        "references/recommended-structure.md",
+        "references/skill-structure.md",
+        "references/use-xml-tags.md",
+        "references/using-scripts.md",
+        "references/using-templates.md",
+        "references/workflows-and-validation.md",
+        "templates/router-skill.md",
+        "templates/simple-skill.md",
+        "workflows/add-reference.md",
+        "workflows/add-script.md",
+        "workflows/add-template.md",
+        "workflows/add-workflow.md",
+        "workflows/audit-skill.md",
+        "workflows/create-domain-expertise-skill.md",
+        "workflows/create-new-skill.md",
+        "workflows/get-guidance.md",
+        "workflows/upgrade-to-router.md",
+        "workflows/verify-skill.md"
+      ]
+    }
+  }
+}

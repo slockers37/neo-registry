@@ -1,0 +1,15 @@
+{
+  "name": "dcp",
+  "dist-tags": { "latest": "1.1.4" },
+  "versions": {
+    "1.1.4": {
+      "name": "dcp",
+      "type": "ocx:plugin",
+      "description": "Directory copy plugin for OpenCode",
+      "files": [],
+      "opencode": {
+        "plugin": ["npm:@tarquinen/opencode-dcp@1.1.4"]
+      }
+    }
+  }
+}

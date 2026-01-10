@@ -1,0 +1,13 @@
+{
+  "name": "plugins",
+  "dist-tags": { "latest": "1.0.0" },
+  "versions": {
+    "1.0.0": {
+      "name": "plugins",
+      "type": "ocx:bundle",
+      "description": "All essential plugins",
+      "files": [],
+      "dependencies": ["oh-my-opencode", "dcp", "md-table-formatter"]
+    }
+  }
+}

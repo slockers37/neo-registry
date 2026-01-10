@@ -1,0 +1,25 @@
+{
+  "name": "consider",
+  "dist-tags": { "latest": "1.0.0" },
+  "versions": {
+    "1.0.0": {
+      "name": "consider",
+      "type": "ocx:command",
+      "description": "12 mental model commands for decision making",
+      "files": [
+        "consider/10-10-10.md",
+        "consider/5-whys.md",
+        "consider/eisenhower-matrix.md",
+        "consider/first-principles.md",
+        "consider/inversion.md",
+        "consider/occams-razor.md",
+        "consider/one-thing.md",
+        "consider/opportunity-cost.md",
+        "consider/pareto.md",
+        "consider/second-order.md",
+        "consider/swot.md",
+        "consider/via-negativa.md"
+      ]
+    }
+  }
+}

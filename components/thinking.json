@@ -1,0 +1,13 @@
+{
+  "name": "thinking",
+  "dist-tags": { "latest": "1.0.0" },
+  "versions": {
+    "1.0.0": {
+      "name": "thinking",
+      "type": "ocx:bundle",
+      "description": "Mental models for decisions",
+      "files": [],
+      "dependencies": ["consider"]
+    }
+  }
+}

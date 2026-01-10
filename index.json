@@ -1,0 +1,28 @@
+{
+  "name": "neo",
+  "namespace": "neo",
+  "version": "1.0.0",
+  "author": "Neo",
+  "components": [
+    { "name": "oh-my-opencode", "type": "ocx:plugin", "description": "Enhanced OpenCode with agents, MCPs, tools" },
+    { "name": "dcp", "type": "ocx:plugin", "description": "Directory copy plugin" },
+    { "name": "md-table-formatter", "type": "ocx:plugin", "description": "Markdown table formatting" },
+    { "name": "tavily", "type": "ocx:skill", "description": "Web search via Tavily API" },
+    { "name": "notebooklm", "type": "ocx:skill", "description": "Google NotebookLM integration" },
+    { "name": "brainstorming", "type": "ocx:skill", "description": "Pre-implementation thinking" },
+    { "name": "systematic-debugging", "type": "ocx:skill", "description": "Structured debugging methodology" },
+    { "name": "test-driven-development", "type": "ocx:skill", "description": "TDD workflow" },
+    { "name": "writing-plans", "type": "ocx:skill", "description": "Create project plans" },
+    { "name": "executing-plans", "type": "ocx:skill", "description": "Execute plans with verification" },
+    { "name": "create-agent-skills", "type": "ocx:skill", "description": "Create and refine OpenCode skills" },
+    { "name": "heal-skill", "type": "ocx:command", "description": "Fix broken skills" },
+    { "name": "consider", "type": "ocx:command", "description": "12 mental model commands" },
+    { "name": "plugins", "type": "ocx:bundle", "description": "All essential plugins" },
+    { "name": "core", "type": "ocx:bundle", "description": "Daily essentials" },
+    { "name": "dev", "type": "ocx:bundle", "description": "Development workflow" },
+    { "name": "debug", "type": "ocx:bundle", "description": "Debugging toolkit" },
+    { "name": "testing", "type": "ocx:bundle", "description": "Test-driven development" },
+    { "name": "meta", "type": "ocx:bundle", "description": "Skill creation and repair" },
+    { "name": "thinking", "type": "ocx:bundle", "description": "Mental models for decisions" }
+  ]
+}

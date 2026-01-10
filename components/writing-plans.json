@@ -1,0 +1,12 @@
+{
+  "name": "writing-plans",
+  "dist-tags": { "latest": "1.0.0" },
+  "versions": {
+    "1.0.0": {
+      "name": "writing-plans",
+      "type": "ocx:skill",
+      "description": "Create hierarchical project plans",
+      "files": ["SKILL.md"]
+    }
+  }
+}

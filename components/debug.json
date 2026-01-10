@@ -1,0 +1,13 @@
+{
+  "name": "debug",
+  "dist-tags": { "latest": "1.0.0" },
+  "versions": {
+    "1.0.0": {
+      "name": "debug",
+      "type": "ocx:bundle",
+      "description": "Debugging toolkit",
+      "files": [],
+      "dependencies": ["systematic-debugging"]
+    }
+  }
+}

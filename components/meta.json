@@ -1,0 +1,13 @@
+{
+  "name": "meta",
+  "dist-tags": { "latest": "1.0.0" },
+  "versions": {
+    "1.0.0": {
+      "name": "meta",
+      "type": "ocx:bundle",
+      "description": "Skill creation and repair",
+      "files": [],
+      "dependencies": ["create-agent-skills", "heal-skill"]
+    }
+  }
+}

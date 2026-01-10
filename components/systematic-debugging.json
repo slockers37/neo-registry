@@ -1,0 +1,19 @@
+{
+  "name": "systematic-debugging",
+  "dist-tags": { "latest": "1.0.0" },
+  "versions": {
+    "1.0.0": {
+      "name": "systematic-debugging",
+      "type": "ocx:skill",
+      "description": "Structured debugging methodology when stuck",
+      "files": [
+        "SKILL.md",
+        "condition-based-waiting.md",
+        "condition-based-waiting-example.ts",
+        "defense-in-depth.md",
+        "find-polluter.sh",
+        "root-cause-tracing.md"
+      ]
+    }
+  }
+}
