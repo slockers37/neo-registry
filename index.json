@@ -19,6 +19,13 @@
     { "name": "create-agent-skills", "type": "ocx:skill", "description": "Create and refine OpenCode skills" },
     { "name": "ocx", "type": "ocx:skill", "description": "Manage OpenCode components - install, registries, ghost mode" },
     { "name": "n8n", "type": "ocx:skill", "description": "Interact with n8n workflows via MCP" },
+    { "name": "n8n-code-javascript", "type": "ocx:skill", "description": "JavaScript Code node patterns and best practices" },
+    { "name": "n8n-code-python", "type": "ocx:skill", "description": "Python Code node patterns and best practices" },
+    { "name": "n8n-expression-syntax", "type": "ocx:skill", "description": "n8n expression syntax reference" },
+    { "name": "n8n-mcp-tools-expert", "type": "ocx:skill", "description": "Expert guide for n8n-mcp tools usage" },
+    { "name": "n8n-node-configuration", "type": "ocx:skill", "description": "Operation-aware node configuration guidance" },
+    { "name": "n8n-validation-expert", "type": "ocx:skill", "description": "Interpret and fix validation errors" },
+    { "name": "n8n-workflow-patterns", "type": "ocx:skill", "description": "Proven workflow architectural patterns" },
     { "name": "heal-skill", "type": "ocx:command", "description": "Fix broken skills" },
     { "name": "consider", "type": "ocx:command", "description": "12 mental model commands" },
     { "name": "plugins", "type": "ocx:bundle", "description": "All essential plugins" },
@@ -27,6 +34,7 @@
     { "name": "debug", "type": "ocx:bundle", "description": "Debugging toolkit" },
     { "name": "testing", "type": "ocx:bundle", "description": "Test-driven development" },
     { "name": "meta", "type": "ocx:bundle", "description": "Skill creation and repair" },
-    { "name": "thinking", "type": "ocx:bundle", "description": "Mental models for decisions" }
+    { "name": "thinking", "type": "ocx:bundle", "description": "Mental models for decisions" },
+    { "name": "n8n-skills", "type": "ocx:bundle", "description": "Complete n8n workflow building skillset with MCP integration" }
   ]
 }
