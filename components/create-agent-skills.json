@@ -33,5 +33,8 @@
         "workflows/verify-skill.md"
       ]
     }
+  },
+  "dist-tags": {
+    "latest": "1.0.0"
   }
 }

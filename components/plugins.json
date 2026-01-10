@@ -12,5 +12,8 @@
         "md-table-formatter"
       ]
     }
+  },
+  "dist-tags": {
+    "latest": "1.0.0"
   }
 }

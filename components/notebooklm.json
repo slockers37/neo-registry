@@ -10,5 +10,8 @@
         "Workflows/PodcastGeneration.md"
       ]
     }
+  },
+  "dist-tags": {
+    "latest": "1.0.0"
   }
 }

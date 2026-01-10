@@ -10,5 +10,8 @@
         "testing-anti-patterns.md"
       ]
     }
+  },
+  "dist-tags": {
+    "latest": "1.0.0"
   }
 }

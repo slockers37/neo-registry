@@ -10,5 +10,8 @@
         "test-driven-development"
       ]
     }
+  },
+  "dist-tags": {
+    "latest": "1.0.0"
   }
 }
