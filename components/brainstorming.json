@@ -6,7 +6,7 @@
       "type": "ocx:skill",
       "description": "Pre-implementation thinking and requirements exploration",
       "files": [
-        "skill/brainstorming/SKILL.md"
+        "SKILL.md"
       ],
       "dependencies": []
     }
