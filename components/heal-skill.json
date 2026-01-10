@@ -6,7 +6,7 @@
       "type": "ocx:command",
       "description": "Fix broken skills",
       "files": [
-        "command/heal-skill/COMMAND.md"
+        "command/heal-skill.md"
       ],
       "dependencies": []
     }
