@@ -6,8 +6,8 @@
       "type": "ocx:skill",
       "description": "TDD workflow for writing tests first",
       "files": [
-        "test-driven-development/SKILL.md",
-        "test-driven-development/testing-anti-patterns.md"
+        "skill/test-driven-development/SKILL.md",
+        "skill/test-driven-development/testing-anti-patterns.md"
       ],
       "dependencies": []
     }
