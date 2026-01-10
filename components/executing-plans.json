@@ -6,7 +6,7 @@
       "type": "ocx:skill",
       "description": "Execute plans with verification",
       "files": [
-        "SKILL.md"
+        "executing-plans/SKILL.md"
       ],
       "dependencies": []
     }
