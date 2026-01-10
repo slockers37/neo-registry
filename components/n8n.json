@@ -1,0 +1,15 @@
+{
+  "name": "n8n",
+  "dist-tags": { "latest": "1.0.0" },
+  "versions": {
+    "1.0.0": {
+      "name": "n8n",
+      "type": "ocx:skill",
+      "description": "Interact with n8n workflows via MCP - automation triggers and management",
+      "files": [
+        "skill/n8n/SKILL.md"
+      ],
+      "dependencies": []
+    }
+  }
+}

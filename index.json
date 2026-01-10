@@ -18,6 +18,7 @@
     { "name": "executing-plans", "type": "ocx:skill", "description": "Execute plans with verification" },
     { "name": "create-agent-skills", "type": "ocx:skill", "description": "Create and refine OpenCode skills" },
     { "name": "ocx", "type": "ocx:skill", "description": "Manage OpenCode components - install, registries, ghost mode" },
+    { "name": "n8n", "type": "ocx:skill", "description": "Interact with n8n workflows via MCP" },
     { "name": "heal-skill", "type": "ocx:command", "description": "Fix broken skills" },
     { "name": "consider", "type": "ocx:command", "description": "12 mental model commands" },
     { "name": "plugins", "type": "ocx:bundle", "description": "All essential plugins" },

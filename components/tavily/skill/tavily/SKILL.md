@@ -1,47 +1,56 @@
 ---
 name: tavily-search-extract
 description: Fast web search and content extraction using the Tavily API.
-model: gemini-2.0-flash-exp
 argument-hint: Use for web search, scraping specific URLs, and gathering real-time data or news.
-mcp:
-  tavily-mcp:
-    command: npx -y @tavily/mcp
 ---
 
 # Tavily Search & Extract
 
 ## Purpose
-A generic technical driver for the Tavily API, providing high-speed web search and clean markdown extraction capabilities.
+High-speed web search and clean markdown extraction via the Tavily API.
 
-## Scope
-- Real-time web search with depth control.
-- Content extraction from target URLs into clean markdown.
-- Batch processing of multiple URLs.
+## Prerequisites
+User must have `tavily` MCP configured in their `opencode.json`:
+```jsonc
+"mcp": {
+  "tavily": {
+    "command": "npx",
+    "args": ["-y", "@tavily/mcp"],
+    "env": { "TAVILY_API_KEY": "${TAVILY_API_KEY}" }
+  }
+}
+```
 
-## Instructions
+## Usage
 
-### 1. Web Search (`tavily_search`)
+### Web Search (`tavily_search`)
 Performs a search for real-time information.
-- Use `search_depth: "advanced"` for thorough research or finding niche data.
-- Use `search_depth: "basic"` for quick facts or broad searches.
-- Set `include_answer: true` for a summarized response.
 
-### 2. Content Extraction (`tavily_extract`)
-Extracts clean markdown content from a list of URLs.
-- Always batch URLs (pass as an array) to maximize efficiency.
-- Ideal for scraping portfolio pages, articles, or documentation.
+```
+skill_mcp(mcp_name="tavily", tool_name="tavily_search", arguments='{"query": "your search", "search_depth": "advanced", "include_answer": true}')
+```
+
+| Parameter | Values | Use Case |
+|-----------|--------|----------|
+| `search_depth` | `"basic"` | Quick facts, broad searches |
+| `search_depth` | `"advanced"` | Thorough research, niche data |
+| `include_answer` | `true` | Get summarized response |
+
+### Content Extraction (`tavily_extract`)
+Extracts clean markdown from URLs.
+
+```
+skill_mcp(mcp_name="tavily", tool_name="tavily_extract", arguments='{"urls": ["https://example.com/page1", "https://example.com/page2"]}')
+```
+
+- Batch up to 10 URLs per call for efficiency
+- Returns clean markdown, ideal for articles/documentation
 
 ## Best Practices
-- **Query Optimization**: Use specific, long-tail queries.
-- **Batching**: Pass up to 10 URLs in a single `tavily_extract` call.
-- **Modularity**: Do not include business-specific logic in this skill; use it as a data provider for other skills.
+- **Query Optimization**: Use specific, long-tail queries
+- **Batching**: Pass multiple URLs in single `tavily_extract` call
+- **Modularity**: Use as data provider for other skills
 
 ## Security
-- **Authentication**: This skill assumes the `TAVILY_API_KEY` is pre-configured in the MCP server's environment.
-- **Secrets**: NEVER hardcode or commit API keys to this file. Use a local `.env` file ignored by Git.
-
-## Dependencies
-- `tavily-mcp` server.
-
-## Version History
-- 1.0.0: Initial WAI-compliant version.
+- API key configured via environment variable `TAVILY_API_KEY`
+- Never hardcode keys - they stay in user's local config
