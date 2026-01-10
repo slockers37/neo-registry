@@ -1,6 +1,5 @@
 {
   "name": "oh-my-opencode",
-  "dist-tags": { "latest": "2.14.0" },
   "versions": {
     "2.14.0": {
       "name": "oh-my-opencode",
@@ -8,7 +7,9 @@
       "description": "Enhanced OpenCode experience with agents, MCPs, and tools",
       "files": [],
       "opencode": {
-        "plugin": ["npm:oh-my-opencode@2.14.0"]
+        "plugin": [
+          "npm:oh-my-opencode@2.14.0"
+        ]
       }
     }
   }

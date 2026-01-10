@@ -1,13 +1,15 @@
 {
   "name": "core",
-  "dist-tags": { "latest": "1.0.0" },
   "versions": {
     "1.0.0": {
       "name": "core",
       "type": "ocx:bundle",
       "description": "Daily essentials: tavily + notebooklm",
       "files": [],
-      "dependencies": ["tavily", "notebooklm"]
+      "dependencies": [
+        "tavily",
+        "notebooklm"
+      ]
     }
   }
 }

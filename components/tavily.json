@@ -1,12 +1,13 @@
 {
   "name": "tavily",
-  "dist-tags": { "latest": "1.0.0" },
   "versions": {
     "1.0.0": {
       "name": "tavily",
       "type": "ocx:skill",
       "description": "Web search and content extraction via Tavily API",
-      "files": ["SKILL.md"],
+      "files": [
+        "SKILL.md"
+      ],
       "opencode": {
         "mcp": {
           "tavily": {

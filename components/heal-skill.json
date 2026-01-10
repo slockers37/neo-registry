@@ -1,12 +1,13 @@
 {
   "name": "heal-skill",
-  "dist-tags": { "latest": "1.0.0" },
   "versions": {
     "1.0.0": {
       "name": "heal-skill",
       "type": "ocx:command",
       "description": "Fix broken skills",
-      "files": ["heal-skill.md"]
+      "files": [
+        "heal-skill.md"
+      ]
     }
   }
 }

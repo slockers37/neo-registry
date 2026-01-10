@@ -1,12 +1,14 @@
 {
   "name": "test-driven-development",
-  "dist-tags": { "latest": "1.0.0" },
   "versions": {
     "1.0.0": {
       "name": "test-driven-development",
       "type": "ocx:skill",
       "description": "TDD workflow for writing tests first",
-      "files": ["SKILL.md", "testing-anti-patterns.md"]
+      "files": [
+        "SKILL.md",
+        "testing-anti-patterns.md"
+      ]
     }
   }
 }
