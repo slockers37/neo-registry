@@ -1,6 +1,6 @@
 # Node Discovery Tools Guide
 
-Complete guide for finding and understanding n8n nodes.
+Complete guide for finding and understanding n8n nodes via mcporter.
 
 ---
 
@@ -11,24 +11,33 @@ Complete guide for finding and understanding n8n nodes.
 **Use when**: You know what you're looking for (keyword, service, use case)
 
 **Syntax**:
-```javascript
-search_nodes({
-  query: "slack",      // Required: search keywords
-  mode: "OR",          // Optional: OR (default), AND, FUZZY
-  limit: 20,           // Optional: max results (default 20)
-  source: "all",       // Optional: all, core, community, verified
-  includeExamples: false  // Optional: include template configs
-})
+```bash
+npx mcporter call "n8n.search_nodes(query: 'slack')"
+
+# With options
+npx mcporter call n8n.search_nodes \
+  query="slack" \
+  mode=OR \
+  limit=20 \
+  source=all \
+  includeExamples=false
 ```
 
+**Parameters**:
+- `query` (required): search keywords
+- `mode`: OR (default), AND, FUZZY
+- `limit`: max results (default 20)
+- `source`: all, core, community, verified
+- `includeExamples`: include template configs
+
 **Returns**:
-```javascript
+```json
 {
   "query": "slack",
   "results": [
     {
-      "nodeType": "nodes-base.slack",                    // For search/validate tools
-      "workflowNodeType": "n8n-nodes-base.slack",       // For workflow tools
+      "nodeType": "nodes-base.slack",
+      "workflowNodeType": "n8n-nodes-base.slack",
       "displayName": "Slack",
       "description": "Consume Slack API",
       "category": "output",
@@ -43,8 +52,8 @@ search_nodes({
 - `OR` mode (default): matches any word
 - `AND` mode: requires all words
 - `FUZZY` mode: typo-tolerant (finds "slak" → Slack)
-- Use `source: "core"` for only built-in nodes
-- Use `includeExamples: true` for real-world configs
+- Use `source=core` for only built-in nodes
+- Use `includeExamples=true` for real-world configs
 
 ---
 
@@ -66,19 +75,18 @@ The `get_node` tool provides all node information with different detail levels a
 
 **Use when**: You've found the node and need configuration details
 
-```javascript
-get_node({
-  nodeType: "nodes-base.slack",      // Required: SHORT prefix format
-  includeExamples: true              // Optional: get real template configs
-})
-// detail="standard" is the default
+```bash
+npx mcporter call "n8n.get_node(nodeType: 'nodes-base.slack')"
+
+# With examples
+npx mcporter call n8n.get_node nodeType=nodes-base.slack includeExamples=true
 ```
 
 **Returns**:
 - Available operations and resources
 - Essential properties (10-20 most common)
 - Metadata (isAITool, isTrigger, hasCredentials)
-- Real examples from templates (if includeExamples: true)
+- Real examples from templates (if includeExamples=true)
 
 ### Minimal Detail
 
@@ -86,11 +94,8 @@ get_node({
 
 **Use when**: Just need basic metadata
 
-```javascript
-get_node({
-  nodeType: "nodes-base.slack",
-  detail: "minimal"
-})
+```bash
+npx mcporter call "n8n.get_node(nodeType: 'nodes-base.slack', detail: 'minimal')"
 ```
 
 **Returns**: nodeType, displayName, description, category
@@ -101,11 +106,8 @@ get_node({
 
 **Use when**: Debugging complex configuration, need complete schema
 
-```javascript
-get_node({
-  nodeType: "nodes-base.httpRequest",
-  detail: "full"
-})
+```bash
+npx mcporter call "n8n.get_node(nodeType: 'nodes-base.httpRequest', detail: 'full')"
 ```
 
 **Warning**: Large payload! Use `standard` for most cases.
@@ -118,11 +120,8 @@ get_node({
 
 **Use when**: Need human-readable documentation with examples
 
-```javascript
-get_node({
-  nodeType: "nodes-base.slack",
-  mode: "docs"
-})
+```bash
+npx mcporter call "n8n.get_node(nodeType: 'nodes-base.slack', mode: 'docs')"
 ```
 
 **Returns**: Formatted markdown with:
@@ -137,13 +136,12 @@ get_node({
 
 **Use when**: Looking for specific property in a node
 
-```javascript
-get_node({
-  nodeType: "nodes-base.httpRequest",
-  mode: "search_properties",
-  propertyQuery: "auth",           // Required for this mode
-  maxPropertyResults: 20           // Optional: default 20
-})
+```bash
+npx mcporter call n8n.get_node \
+  nodeType=nodes-base.httpRequest \
+  mode=search_properties \
+  propertyQuery=auth \
+  maxPropertyResults=20
 ```
 
 **Returns**: Property paths and descriptions matching query
@@ -154,11 +152,8 @@ get_node({
 
 **Use when**: Need to check node version history
 
-```javascript
-get_node({
-  nodeType: "nodes-base.executeWorkflow",
-  mode: "versions"
-})
+```bash
+npx mcporter call "n8n.get_node(nodeType: 'nodes-base.executeWorkflow', mode: 'versions')"
 ```
 
 **Returns**: Version history with breaking changes flags
@@ -167,13 +162,12 @@ get_node({
 
 **Use when**: Need to see differences between versions
 
-```javascript
-get_node({
-  nodeType: "nodes-base.httpRequest",
-  mode: "compare",
-  fromVersion: "3.0",
-  toVersion: "4.1"       // Optional: defaults to latest
-})
+```bash
+npx mcporter call n8n.get_node \
+  nodeType=nodes-base.httpRequest \
+  mode=compare \
+  fromVersion=3.0 \
+  toVersion=4.1
 ```
 
 **Returns**: Property-level changes between versions
@@ -182,12 +176,8 @@ get_node({
 
 **Use when**: Checking for breaking changes before upgrades
 
-```javascript
-get_node({
-  nodeType: "nodes-base.httpRequest",
-  mode: "breaking",
-  fromVersion: "3.0"
-})
+```bash
+npx mcporter call "n8n.get_node(nodeType: 'nodes-base.httpRequest', mode: 'breaking', fromVersion: '3.0')"
 ```
 
 **Returns**: Only breaking changes (not all changes)
@@ -196,12 +186,8 @@ get_node({
 
 **Use when**: Checking what can be auto-migrated
 
-```javascript
-get_node({
-  nodeType: "nodes-base.httpRequest",
-  mode: "migrations",
-  fromVersion: "3.0"
-})
+```bash
+npx mcporter call "n8n.get_node(nodeType: 'nodes-base.httpRequest', mode: 'migrations', fromVersion: '3.0')"
 ```
 
 **Returns**: Changes that can be automatically migrated
@@ -214,54 +200,44 @@ get_node({
 
 Add type structure metadata (validation rules, JS types)
 
-```javascript
-get_node({
-  nodeType: "nodes-base.if",
-  includeTypeInfo: true   // Adds ~80-120 tokens per property
-})
+```bash
+npx mcporter call "n8n.get_node(nodeType: 'nodes-base.if', includeTypeInfo: true)"
 ```
 
-Use for complex nodes like filter, resourceMapper
+Use for complex nodes like filter, resourceMapper. Adds ~80-120 tokens per property.
 
 ### includeExamples
 
 Include real-world configuration examples from templates
 
-```javascript
-get_node({
-  nodeType: "nodes-base.slack",
-  includeExamples: true   // Adds ~200-400 tokens per example
-})
+```bash
+npx mcporter call "n8n.get_node(nodeType: 'nodes-base.slack', includeExamples: true)"
 ```
 
-Only works with `mode: "info"` and `detail: "standard"`
+Only works with `mode: "info"` and `detail: "standard"`. Adds ~200-400 tokens per example.
 
 ---
 
 ## Common Workflow: Finding & Configuring
 
-```
-Step 1: Search
-search_nodes({query: "slack"})
-→ Returns: nodes-base.slack
+```bash
+# Step 1: Search
+npx mcporter call "n8n.search_nodes(query: 'slack')"
+# → Returns: nodes-base.slack
 
-Step 2: Get Operations (18s avg thinking time)
-get_node({
-  nodeType: "nodes-base.slack",
-  includeExamples: true
-})
-→ Returns: operations list + example configs
+# Step 2: Get Operations (18s avg thinking time)
+npx mcporter call "n8n.get_node(nodeType: 'nodes-base.slack', includeExamples: true)"
+# → Returns: operations list + example configs
 
-Step 3: Validate Config
-validate_node({
-  nodeType: "nodes-base.slack",
-  config: {resource: "channel", operation: "create"},
-  profile: "runtime"
-})
-→ Returns: validation result
+# Step 3: Validate Config
+npx mcporter call n8n.validate_node \
+  nodeType=nodes-base.slack \
+  config='{"resource":"channel","operation":"create"}' \
+  profile=runtime
+# → Returns: validation result
 
-Step 4: Use in Workflow
-(Configuration ready!)
+# Step 4: Use in Workflow
+# (Configuration ready!)
 ```
 
 **Most common pattern**: search → get_node (18s average)
@@ -287,24 +263,24 @@ Step 4: Use in Workflow
 ## nodeType Format (CRITICAL!)
 
 **Search/Validate Tools** (SHORT prefix):
-```javascript
-"nodes-base.slack"
-"nodes-base.httpRequest"
-"nodes-langchain.agent"
+```
+nodes-base.slack
+nodes-base.httpRequest
+nodes-langchain.agent
 ```
 
 **Workflow Tools** (FULL prefix):
-```javascript
-"n8n-nodes-base.slack"
-"n8n-nodes-base.httpRequest"
-"@n8n/n8n-nodes-langchain.agent"
+```
+n8n-nodes-base.slack
+n8n-nodes-base.httpRequest
+@n8n/n8n-nodes-langchain.agent
 ```
 
 **Conversion**: search_nodes returns BOTH formats:
-```javascript
+```json
 {
-  "nodeType": "nodes-base.slack",          // Use with get_node, validate_node
-  "workflowNodeType": "n8n-nodes-base.slack"  // Use with n8n_create_workflow
+  "nodeType": "nodes-base.slack",
+  "workflowNodeType": "n8n-nodes-base.slack"
 }
 ```
 
@@ -314,56 +290,47 @@ Step 4: Use in Workflow
 
 ### Find and Configure HTTP Request
 
-```javascript
-// Step 1: Search
-search_nodes({query: "http request"})
+```bash
+# Step 1: Search
+npx mcporter call "n8n.search_nodes(query: 'http request')"
 
-// Step 2: Get standard info
-get_node({nodeType: "nodes-base.httpRequest"})
+# Step 2: Get standard info
+npx mcporter call "n8n.get_node(nodeType: 'nodes-base.httpRequest')"
 
-// Step 3: Find auth options
-get_node({
-  nodeType: "nodes-base.httpRequest",
-  mode: "search_properties",
-  propertyQuery: "authentication"
-})
+# Step 3: Find auth options
+npx mcporter call n8n.get_node \
+  nodeType=nodes-base.httpRequest \
+  mode=search_properties \
+  propertyQuery=authentication
 
-// Step 4: Validate config
-validate_node({
-  nodeType: "nodes-base.httpRequest",
-  config: {method: "POST", url: "https://api.example.com"},
-  profile: "runtime"
-})
+# Step 4: Validate config
+npx mcporter call n8n.validate_node \
+  nodeType=nodes-base.httpRequest \
+  config='{"method":"POST","url":"https://api.example.com"}' \
+  profile=runtime
 ```
 
 ### Explore AI Nodes
 
-```javascript
-// Find all AI-related nodes
-search_nodes({query: "ai agent", source: "all"})
+```bash
+# Find all AI-related nodes
+npx mcporter call "n8n.search_nodes(query: 'ai agent', source: 'all')"
 
-// Get AI Agent documentation
-get_node({nodeType: "nodes-langchain.agent", mode: "docs"})
+# Get AI Agent documentation
+npx mcporter call "n8n.get_node(nodeType: 'nodes-langchain.agent', mode: 'docs')"
 
-// Get configuration details with examples
-get_node({
-  nodeType: "nodes-langchain.agent",
-  includeExamples: true
-})
+# Get configuration details with examples
+npx mcporter call "n8n.get_node(nodeType: 'nodes-langchain.agent', includeExamples: true)"
 ```
 
 ### Check Version Compatibility
 
-```javascript
-// See all versions
-get_node({nodeType: "nodes-base.executeWorkflow", mode: "versions"})
+```bash
+# See all versions
+npx mcporter call "n8n.get_node(nodeType: 'nodes-base.executeWorkflow', mode: 'versions')"
 
-// Check breaking changes from v1 to v2
-get_node({
-  nodeType: "nodes-base.executeWorkflow",
-  mode: "breaking",
-  fromVersion: "1.0"
-})
+# Check breaking changes from v1 to v2
+npx mcporter call "n8n.get_node(nodeType: 'nodes-base.executeWorkflow', mode: 'breaking', fromVersion: '1.0')"
 ```
 
 ---

@@ -1,18 +1,37 @@
 ---
 name: n8n-mcp-tools-expert
-description: Expert guide for using n8n-mcp MCP tools effectively. Use when searching for nodes, validating configurations, accessing templates, managing workflows, or using any n8n-mcp tool. Provides tool selection guidance, parameter formats, and common patterns.
-mcp:
-  n8n:
-    command: npx
-    args: ["-y", "n8n-mcp"]
-    env:
-      N8N_API_URL: ${N8N_API_URL}
-      N8N_API_KEY: ${N8N_API_KEY}
+description: Expert guide for using n8n-mcp MCP tools via mcporter. Use when searching for nodes, validating configurations, accessing templates, managing workflows, or using any n8n-mcp tool. Provides tool selection guidance, parameter formats, and common patterns.
 ---
 
 # n8n MCP Tools Expert
 
 Master guide for using n8n-mcp MCP server tools to build workflows.
+
+## Calling n8n Tools via mcporter
+
+All n8n MCP tools are called through mcporter CLI:
+
+```bash
+# Discover available tools
+npx mcporter list n8n --schema
+
+# Call a tool
+npx mcporter call "n8n.<tool_name>(param: value)"
+# OR
+npx mcporter call n8n.<tool_name> param=value
+```
+
+**Examples:**
+```bash
+# Search for nodes
+npx mcporter call "n8n.search_nodes(query: 'slack')"
+
+# Get node details
+npx mcporter call "n8n.get_node(nodeType: 'nodes-base.slack')"
+
+# Validate configuration
+npx mcporter call n8n.validate_node nodeType=nodes-base.slack config='{"resource":"channel"}' profile=runtime
+```
 
 ---
 
@@ -20,9 +39,9 @@ Master guide for using n8n-mcp MCP server tools to build workflows.
 
 n8n-mcp provides tools organized into categories:
 
-1. **Node Discovery** → [SEARCH_GUIDE.md](SEARCH_GUIDE.md)
-2. **Configuration Validation** → [VALIDATION_GUIDE.md](VALIDATION_GUIDE.md)
-3. **Workflow Management** → [WORKFLOW_GUIDE.md](WORKFLOW_GUIDE.md)
+1. **Node Discovery** - [SEARCH_GUIDE.md](SEARCH_GUIDE.md)
+2. **Configuration Validation** - [VALIDATION_GUIDE.md](VALIDATION_GUIDE.md)
+3. **Workflow Management** - [WORKFLOW_GUIDE.md](WORKFLOW_GUIDE.md)
 4. **Template Library** - Search and deploy 2,700+ real workflows
 5. **Documentation & Guides** - Tool docs, AI agent guide, Code node guides
 
@@ -49,49 +68,67 @@ n8n-mcp provides tools organized into categories:
 ### Finding the Right Node
 
 **Workflow**:
-```
-1. search_nodes({query: "keyword"})
-2. get_node({nodeType: "nodes-base.name"})
-3. [Optional] get_node({nodeType: "nodes-base.name", mode: "docs"})
+```bash
+# 1. Search
+npx mcporter call "n8n.search_nodes(query: 'keyword')"
+
+# 2. Get details
+npx mcporter call "n8n.get_node(nodeType: 'nodes-base.name')"
+
+# 3. [Optional] Get docs
+npx mcporter call "n8n.get_node(nodeType: 'nodes-base.name', mode: 'docs')"
 ```
 
 **Example**:
-```javascript
-// Step 1: Search
-search_nodes({query: "slack"})
-// Returns: nodes-base.slack
+```bash
+# Step 1: Search
+npx mcporter call "n8n.search_nodes(query: 'slack')"
+# Returns: nodes-base.slack
 
-// Step 2: Get details
-get_node({nodeType: "nodes-base.slack"})
-// Returns: operations, properties, examples (standard detail)
+# Step 2: Get details
+npx mcporter call "n8n.get_node(nodeType: 'nodes-base.slack')"
+# Returns: operations, properties, examples (standard detail)
 
-// Step 3: Get readable documentation
-get_node({nodeType: "nodes-base.slack", mode: "docs"})
-// Returns: markdown documentation
+# Step 3: Get readable documentation
+npx mcporter call "n8n.get_node(nodeType: 'nodes-base.slack', mode: 'docs')"
+# Returns: markdown documentation
 ```
 
-**Common pattern**: search → get_node (18s average)
+**Common pattern**: search -> get_node (18s average)
 
 ### Validating Configuration
 
 **Workflow**:
-```
-1. validate_node({nodeType, config: {}, mode: "minimal"}) - Check required fields
-2. validate_node({nodeType, config, profile: "runtime"}) - Full validation
-3. [Repeat] Fix errors, validate again
+```bash
+# 1. Check required fields
+npx mcporter call n8n.validate_node nodeType=nodes-base.slack config='{}' mode=minimal
+
+# 2. Full validation
+npx mcporter call n8n.validate_node nodeType=nodes-base.slack config='{"resource":"channel"}' profile=runtime
+
+# 3. Fix errors, validate again
 ```
 
-**Common pattern**: validate → fix → validate (23s thinking, 58s fixing per cycle)
+**Common pattern**: validate -> fix -> validate (23s thinking, 58s fixing per cycle)
 
 ### Managing Workflows
 
 **Workflow**:
-```
-1. n8n_create_workflow({name, nodes, connections})
-2. n8n_validate_workflow({id})
-3. n8n_update_partial_workflow({id, operations: [...]})
-4. n8n_validate_workflow({id}) again
-5. n8n_update_partial_workflow({id, operations: [{type: "activateWorkflow"}]})
+```bash
+# 1. Create workflow
+npx mcporter call n8n.n8n_create_workflow name="My Workflow" nodes='[...]' connections='{}'
+
+# 2. Validate
+npx mcporter call "n8n.n8n_validate_workflow(id: 'workflow-id')"
+
+# 3. Update iteratively
+npx mcporter call n8n.n8n_update_partial_workflow id=workflow-id operations='[{"type":"addNode","node":{...}}]'
+
+# 4. Validate again
+npx mcporter call "n8n.n8n_validate_workflow(id: 'workflow-id')"
+
+# 5. Activate
+npx mcporter call n8n.n8n_update_partial_workflow id=workflow-id operations='[{"type":"activateWorkflow"}]'
 ```
 
 **Common pattern**: iterative updates (56s average between edits)
@@ -103,12 +140,12 @@ get_node({nodeType: "nodes-base.slack", mode: "docs"})
 **Two different formats** for different tools!
 
 ### Format 1: Search/Validate Tools
-```javascript
-// Use SHORT prefix
-"nodes-base.slack"
-"nodes-base.httpRequest"
-"nodes-base.webhook"
-"nodes-langchain.agent"
+```
+# Use SHORT prefix
+nodes-base.slack
+nodes-base.httpRequest
+nodes-base.webhook
+nodes-langchain.agent
 ```
 
 **Tools that use this**:
@@ -118,12 +155,12 @@ get_node({nodeType: "nodes-base.slack", mode: "docs"})
 - validate_workflow
 
 ### Format 2: Workflow Tools
-```javascript
-// Use FULL prefix
-"n8n-nodes-base.slack"
-"n8n-nodes-base.httpRequest"
-"n8n-nodes-base.webhook"
-"@n8n/n8n-nodes-langchain.agent"
+```
+# Use FULL prefix
+n8n-nodes-base.slack
+n8n-nodes-base.httpRequest
+n8n-nodes-base.webhook
+@n8n/n8n-nodes-langchain.agent
 ```
 
 **Tools that use this**:
@@ -132,10 +169,10 @@ get_node({nodeType: "nodes-base.slack", mode: "docs"})
 
 ### Conversion
 
-```javascript
-// search_nodes returns BOTH formats
+search_nodes returns BOTH formats:
+```json
 {
-  "nodeType": "nodes-base.slack",          // For search/validate tools
+  "nodeType": "nodes-base.slack",           // For search/validate tools
   "workflowNodeType": "n8n-nodes-base.slack"  // For workflow tools
 }
 ```
@@ -148,26 +185,25 @@ get_node({nodeType: "nodes-base.slack", mode: "docs"})
 
 **Problem**: "Node not found" error
 
-```javascript
-// WRONG
-get_node({nodeType: "slack"})  // Missing prefix
-get_node({nodeType: "n8n-nodes-base.slack"})  // Wrong prefix
+```bash
+# WRONG
+npx mcporter call "n8n.get_node(nodeType: 'slack')"  # Missing prefix
+npx mcporter call "n8n.get_node(nodeType: 'n8n-nodes-base.slack')"  # Wrong prefix
 
-// CORRECT
-get_node({nodeType: "nodes-base.slack"})
+# CORRECT
+npx mcporter call "n8n.get_node(nodeType: 'nodes-base.slack')"
 ```
 
 ### Mistake 2: Using detail="full" by Default
 
 **Problem**: Huge payload, slower response, token waste
 
-```javascript
-// WRONG - Returns 3-8K tokens, use sparingly
-get_node({nodeType: "nodes-base.slack", detail: "full"})
+```bash
+# WRONG - Returns 3-8K tokens, use sparingly
+npx mcporter call "n8n.get_node(nodeType: 'nodes-base.slack', detail: 'full')"
 
-// CORRECT - Returns 1-2K tokens, covers 95% of use cases
-get_node({nodeType: "nodes-base.slack"})  // detail="standard" is default
-get_node({nodeType: "nodes-base.slack", detail: "standard"})
+# CORRECT - Returns 1-2K tokens, covers 95% of use cases
+npx mcporter call "n8n.get_node(nodeType: 'nodes-base.slack')"  # detail="standard" is default
 ```
 
 **When to use detail="full"**:
@@ -176,9 +212,16 @@ get_node({nodeType: "nodes-base.slack", detail: "standard"})
 - Exploring advanced features
 
 **Better alternatives**:
-1. `get_node({detail: "standard"})` - for operations list (default)
-2. `get_node({mode: "docs"})` - for readable documentation
-3. `get_node({mode: "search_properties", propertyQuery: "auth"})` - for specific property
+```bash
+# For operations list (default)
+npx mcporter call "n8n.get_node(nodeType: 'nodes-base.slack', detail: 'standard')"
+
+# For readable documentation
+npx mcporter call "n8n.get_node(nodeType: 'nodes-base.slack', mode: 'docs')"
+
+# For specific property
+npx mcporter call "n8n.get_node(nodeType: 'nodes-base.httpRequest', mode: 'search_properties', propertyQuery: 'auth')"
+```
 
 ### Mistake 3: Not Using Validation Profiles
 
@@ -190,12 +233,12 @@ get_node({nodeType: "nodes-base.slack", detail: "standard"})
 - `ai-friendly` - Reduce false positives (for AI configuration)
 - `strict` - Maximum validation (for production)
 
-```javascript
-// WRONG - Uses default profile
-validate_node({nodeType, config})
+```bash
+# WRONG - Uses default profile
+npx mcporter call n8n.validate_node nodeType=nodes-base.slack config='{...}'
 
-// CORRECT - Explicit profile
-validate_node({nodeType, config, profile: "runtime"})
+# CORRECT - Explicit profile
+npx mcporter call n8n.validate_node nodeType=nodes-base.slack config='{...}' profile=runtime
 ```
 
 ### Mistake 4: Ignoring Auto-Sanitization
@@ -203,19 +246,19 @@ validate_node({nodeType, config, profile: "runtime"})
 **What happens**: ALL nodes sanitized on ANY workflow update
 
 **Auto-fixes**:
-- Binary operators (equals, contains) → removes singleValue
-- Unary operators (isEmpty, isNotEmpty) → adds singleValue: true
-- IF/Switch nodes → adds missing metadata
+- Binary operators (equals, contains) -> removes singleValue
+- Unary operators (isEmpty, isNotEmpty) -> adds singleValue: true
+- IF/Switch nodes -> adds missing metadata
 
 **Cannot fix**:
 - Broken connections
 - Branch count mismatches
 - Paradoxical corrupt states
 
-```javascript
-// After ANY update, auto-sanitization runs on ALL nodes
-n8n_update_partial_workflow({id, operations: [...]})
-// → Automatically fixes operator structures
+```bash
+# After ANY update, auto-sanitization runs on ALL nodes
+npx mcporter call n8n.n8n_update_partial_workflow id=workflow-id operations='[...]'
+# -> Automatically fixes operator structures
 ```
 
 ### Mistake 5: Not Using Smart Parameters
@@ -223,39 +266,31 @@ n8n_update_partial_workflow({id, operations: [...]})
 **Problem**: Complex sourceIndex calculations for multi-output nodes
 
 **Old way** (manual):
-```javascript
-// IF node connection
+```json
 {
-  type: "addConnection",
-  source: "IF",
-  target: "Handler",
-  sourceIndex: 0  // Which output? Hard to remember!
+  "type": "addConnection",
+  "source": "IF",
+  "target": "Handler",
+  "sourceIndex": 0
 }
 ```
 
 **New way** (smart parameters):
-```javascript
-// IF node - semantic branch names
+```json
 {
-  type: "addConnection",
-  source: "IF",
-  target: "True Handler",
-  branch: "true"  // Clear and readable!
+  "type": "addConnection",
+  "source": "IF",
+  "target": "True Handler",
+  "branch": "true"
 }
+```
 
+```json
 {
-  type: "addConnection",
-  source: "IF",
-  target: "False Handler",
-  branch: "false"
-}
-
-// Switch node - semantic case numbers
-{
-  type: "addConnection",
-  source: "Switch",
-  target: "Handler A",
-  case: 0
+  "type": "addConnection",
+  "source": "Switch",
+  "target": "Handler A",
+  "case": 0
 }
 ```
 
@@ -263,19 +298,12 @@ n8n_update_partial_workflow({id, operations: [...]})
 
 **Problem**: Less helpful tool responses
 
-```javascript
-// WRONG - No context for response
-n8n_update_partial_workflow({
-  id: "abc",
-  operations: [{type: "addNode", node: {...}}]
-})
+```bash
+# WRONG - No context for response
+npx mcporter call n8n.n8n_update_partial_workflow id=abc operations='[{"type":"addNode","node":{...}}]'
 
-// CORRECT - Better AI responses
-n8n_update_partial_workflow({
-  id: "abc",
-  intent: "Add error handling for API failures",
-  operations: [{type: "addNode", node: {...}}]
-})
+# CORRECT - Better AI responses
+npx mcporter call n8n.n8n_update_partial_workflow id=abc intent="Add error handling for API failures" operations='[{"type":"addNode","node":{...}}]'
 ```
 
 ---
@@ -286,83 +314,71 @@ n8n_update_partial_workflow({
 
 **Common workflow**: 18s average between steps
 
-```javascript
-// Step 1: Search (fast!)
-const results = await search_nodes({
-  query: "slack",
-  mode: "OR",  // Default: any word matches
-  limit: 20
-});
-// → Returns: nodes-base.slack, nodes-base.slackTrigger
+```bash
+# Step 1: Search (fast!)
+npx mcporter call "n8n.search_nodes(query: 'slack', mode: 'OR', limit: 20)"
+# -> Returns: nodes-base.slack, nodes-base.slackTrigger
 
-// Step 2: Get details (~18s later, user reviewing results)
-const details = await get_node({
-  nodeType: "nodes-base.slack",
-  includeExamples: true  // Get real template configs
-});
-// → Returns: operations, properties, metadata
+# Step 2: Get details (~18s later, user reviewing results)
+npx mcporter call "n8n.get_node(nodeType: 'nodes-base.slack', includeExamples: true)"
+# -> Returns: operations, properties, metadata
 ```
 
 ### Pattern 2: Validation Loop
 
 **Typical cycle**: 23s thinking, 58s fixing
 
-```javascript
-// Step 1: Validate
-const result = await validate_node({
-  nodeType: "nodes-base.slack",
-  config: {
-    resource: "channel",
-    operation: "create"
-  },
-  profile: "runtime"
-});
+```bash
+# Step 1: Validate
+npx mcporter call n8n.validate_node \
+  nodeType=nodes-base.slack \
+  config='{"resource":"channel","operation":"create"}' \
+  profile=runtime
 
-// Step 2: Check errors (~23s thinking)
-if (!result.valid) {
-  console.log(result.errors);  // "Missing required field: name"
-}
+# Step 2: Check errors (~23s thinking)
+# If errors: "Missing required field: name"
 
-// Step 3: Fix config (~58s fixing)
-config.name = "general";
+# Step 3: Fix config (~58s fixing)
+# Add the missing field
 
-// Step 4: Validate again
-await validate_node({...});  // Repeat until clean
+# Step 4: Validate again
+npx mcporter call n8n.validate_node \
+  nodeType=nodes-base.slack \
+  config='{"resource":"channel","operation":"create","name":"general"}' \
+  profile=runtime
 ```
 
 ### Pattern 3: Workflow Editing
 
 **Most used update tool**: 99.0% success rate, 56s average between edits
 
-```javascript
-// Iterative workflow building (NOT one-shot!)
-// Edit 1
-await n8n_update_partial_workflow({
-  id: "workflow-id",
-  intent: "Add webhook trigger",
-  operations: [{type: "addNode", node: {...}}]
-});
+```bash
+# Iterative workflow building (NOT one-shot!)
 
-// ~56s later...
+# Edit 1
+npx mcporter call n8n.n8n_update_partial_workflow \
+  id=workflow-id \
+  intent="Add webhook trigger" \
+  operations='[{"type":"addNode","node":{...}}]'
 
-// Edit 2
-await n8n_update_partial_workflow({
-  id: "workflow-id",
-  intent: "Connect webhook to processor",
-  operations: [{type: "addConnection", source: "...", target: "..."}]
-});
+# ~56s later...
 
-// ~56s later...
+# Edit 2
+npx mcporter call n8n.n8n_update_partial_workflow \
+  id=workflow-id \
+  intent="Connect webhook to processor" \
+  operations='[{"type":"addConnection","source":"...","target":"..."}]'
 
-// Edit 3 (validation)
-await n8n_validate_workflow({id: "workflow-id"});
+# ~56s later...
 
-// Ready? Activate!
-await n8n_update_partial_workflow({
-  id: "workflow-id",
-  intent: "Activate workflow for production",
-  operations: [{type: "activateWorkflow"}]
-});
+# Edit 3 (validation)
+npx mcporter call "n8n.n8n_validate_workflow(id: 'workflow-id')"
+
+# Ready? Activate!
+npx mcporter call n8n.n8n_update_partial_workflow \
+  id=workflow-id \
+  intent="Activate workflow for production" \
+  operations='[{"type":"activateWorkflow"}]'
 ```
 
 ---
@@ -399,58 +415,42 @@ See [WORKFLOW_GUIDE.md](WORKFLOW_GUIDE.md) for:
 
 ### Search Templates
 
-```javascript
-// Search by keyword (default mode)
-search_templates({
-  query: "webhook slack",
-  limit: 20
-});
+```bash
+# Search by keyword (default mode)
+npx mcporter call "n8n.search_templates(query: 'webhook slack', limit: 20)"
 
-// Search by node types
-search_templates({
-  searchMode: "by_nodes",
-  nodeTypes: ["n8n-nodes-base.httpRequest", "n8n-nodes-base.slack"]
-});
+# Search by node types
+npx mcporter call n8n.search_templates \
+  searchMode=by_nodes \
+  nodeTypes='["n8n-nodes-base.httpRequest","n8n-nodes-base.slack"]'
 
-// Search by task type
-search_templates({
-  searchMode: "by_task",
-  task: "webhook_processing"
-});
+# Search by task type
+npx mcporter call "n8n.search_templates(searchMode: 'by_task', task: 'webhook_processing')"
 
-// Search by metadata (complexity, setup time)
-search_templates({
-  searchMode: "by_metadata",
-  complexity: "simple",
-  maxSetupMinutes: 15
-});
+# Search by metadata (complexity, setup time)
+npx mcporter call "n8n.search_templates(searchMode: 'by_metadata', complexity: 'simple', maxSetupMinutes: 15)"
 ```
 
 ### Get Template Details
 
-```javascript
-get_template({
-  templateId: 2947,
-  mode: "structure"  // nodes+connections only
-});
+```bash
+# Structure only (nodes+connections)
+npx mcporter call "n8n.get_template(templateId: 2947, mode: 'structure')"
 
-get_template({
-  templateId: 2947,
-  mode: "full"  // complete workflow JSON
-});
+# Full workflow JSON
+npx mcporter call "n8n.get_template(templateId: 2947, mode: 'full')"
 ```
 
 ### Deploy Template Directly
 
-```javascript
-// Deploy template to your n8n instance
-n8n_deploy_template({
-  templateId: 2947,
-  name: "My Weather to Slack",  // Custom name (optional)
-  autoFix: true,  // Auto-fix common issues (default)
-  autoUpgradeVersions: true  // Upgrade node versions (default)
-});
-// Returns: workflow ID, required credentials, fixes applied
+```bash
+# Deploy template to your n8n instance
+npx mcporter call n8n.n8n_deploy_template \
+  templateId=2947 \
+  name="My Weather to Slack" \
+  autoFix=true \
+  autoUpgradeVersions=true
+# Returns: workflow ID, required credentials, fixes applied
 ```
 
 ---
@@ -459,38 +459,35 @@ n8n_deploy_template({
 
 ### Get Tool Documentation
 
-```javascript
-// Overview of all tools
-tools_documentation()
+```bash
+# Overview of all tools
+npx mcporter call n8n.tools_documentation
 
-// Specific tool details
-tools_documentation({
-  topic: "search_nodes",
-  depth: "full"
-})
+# Specific tool details
+npx mcporter call "n8n.tools_documentation(topic: 'search_nodes', depth: 'full')"
 
-// Code node guides
-tools_documentation({topic: "javascript_code_node_guide", depth: "full"})
-tools_documentation({topic: "python_code_node_guide", depth: "full"})
+# Code node guides
+npx mcporter call "n8n.tools_documentation(topic: 'javascript_code_node_guide', depth: 'full')"
+npx mcporter call "n8n.tools_documentation(topic: 'python_code_node_guide', depth: 'full')"
 ```
 
 ### AI Agent Guide
 
-```javascript
-// Comprehensive AI workflow guide
-ai_agents_guide()
-// Returns: Architecture, connections, tools, validation, best practices
+```bash
+# Comprehensive AI workflow guide
+npx mcporter call n8n.ai_agents_guide
+# Returns: Architecture, connections, tools, validation, best practices
 ```
 
 ### Health Check
 
-```javascript
-// Quick health check
-n8n_health_check()
+```bash
+# Quick health check
+npx mcporter call n8n.n8n_health_check
 
-// Detailed diagnostics
-n8n_health_check({mode: "diagnostic"})
-// → Returns: status, env vars, tool status, API connectivity
+# Detailed diagnostics
+npx mcporter call "n8n.n8n_health_check(mode: 'diagnostic')"
+# -> Returns: status, env vars, tool status, API connectivity
 ```
 
 ---
@@ -536,18 +533,18 @@ If API tools unavailable, use templates and validation-only workflows.
 - `breaking` - Show only breaking changes
 - `migrations` - Show auto-migratable changes
 
-```javascript
-// Standard (recommended)
-get_node({nodeType: "nodes-base.httpRequest"})
+```bash
+# Standard (recommended)
+npx mcporter call "n8n.get_node(nodeType: 'nodes-base.httpRequest')"
 
-// Get documentation
-get_node({nodeType: "nodes-base.webhook", mode: "docs"})
+# Get documentation
+npx mcporter call "n8n.get_node(nodeType: 'nodes-base.webhook', mode: 'docs')"
 
-// Search for properties
-get_node({nodeType: "nodes-base.httpRequest", mode: "search_properties", propertyQuery: "auth"})
+# Search for properties
+npx mcporter call "n8n.get_node(nodeType: 'nodes-base.httpRequest', mode: 'search_properties', propertyQuery: 'auth')"
 
-// Check versions
-get_node({nodeType: "nodes-base.executeWorkflow", mode: "versions"})
+# Check versions
+npx mcporter call "n8n.get_node(nodeType: 'nodes-base.executeWorkflow', mode: 'versions')"
 ```
 
 ### validate_node (Unified Validation)
@@ -562,12 +559,12 @@ get_node({nodeType: "nodes-base.executeWorkflow", mode: "versions"})
 - `ai-friendly` - Balanced for AI workflows
 - `strict` - Most thorough (production)
 
-```javascript
-// Full validation with runtime profile
-validate_node({nodeType: "nodes-base.slack", config: {...}, profile: "runtime"})
+```bash
+# Full validation with runtime profile
+npx mcporter call n8n.validate_node nodeType=nodes-base.slack config='{...}' profile=runtime
 
-// Quick required fields check
-validate_node({nodeType: "nodes-base.webhook", config: {}, mode: "minimal"})
+# Quick required fields check
+npx mcporter call "n8n.validate_node(nodeType: 'nodes-base.webhook', config: {}, mode: 'minimal')"
 ```
 
 ---
@@ -591,11 +588,11 @@ validate_node({nodeType: "nodes-base.webhook", config: {}, mode: "minimal"})
 ## Best Practices
 
 ### Do
-- Use `get_node({detail: "standard"})` for most use cases
+- Use `get_node` with `detail: "standard"` for most use cases
 - Specify validation profile explicitly (`profile: "runtime"`)
 - Use smart parameters (`branch`, `case`) for clarity
 - Include `intent` parameter in workflow updates
-- Follow search → get_node → validate workflow
+- Follow search -> get_node -> validate workflow
 - Iterate workflows (avg 56s between edits)
 - Validate after every significant change
 - Use `includeExamples: true` for real configs
@@ -615,23 +612,39 @@ validate_node({nodeType: "nodes-base.webhook", config: {}, mode: "minimal"})
 ## Summary
 
 **Most Important**:
-1. Use **get_node** with `detail: "standard"` (default) - covers 95% of use cases
-2. nodeType formats differ: `nodes-base.*` (search/validate) vs `n8n-nodes-base.*` (workflows)
-3. Specify **validation profiles** (`runtime` recommended)
-4. Use **smart parameters** (`branch="true"`, `case=0`)
-5. Include **intent parameter** in workflow updates
-6. **Auto-sanitization** runs on ALL nodes during updates
-7. Workflows can be **activated via API** (`activateWorkflow` operation)
-8. Workflows are built **iteratively** (56s avg between edits)
+1. All tools called via: `npx mcporter call n8n.<tool> ...`
+2. Use **get_node** with `detail: "standard"` (default) - covers 95% of use cases
+3. nodeType formats differ: `nodes-base.*` (search/validate) vs `n8n-nodes-base.*` (workflows)
+4. Specify **validation profiles** (`runtime` recommended)
+5. Use **smart parameters** (`branch="true"`, `case=0`)
+6. Include **intent parameter** in workflow updates
+7. **Auto-sanitization** runs on ALL nodes during updates
+8. Workflows can be **activated via API** (`activateWorkflow` operation)
+9. Workflows are built **iteratively** (56s avg between edits)
 
 **Common Workflow**:
-1. search_nodes → find node
-2. get_node → understand config
-3. validate_node → check config
-4. n8n_create_workflow → build
-5. n8n_validate_workflow → verify
-6. n8n_update_partial_workflow → iterate
-7. activateWorkflow → go live!
+```bash
+# 1. Find node
+npx mcporter call "n8n.search_nodes(query: 'slack')"
+
+# 2. Understand config
+npx mcporter call "n8n.get_node(nodeType: 'nodes-base.slack')"
+
+# 3. Check config
+npx mcporter call n8n.validate_node nodeType=nodes-base.slack config='{...}' profile=runtime
+
+# 4. Build workflow
+npx mcporter call n8n.n8n_create_workflow name="My Workflow" nodes='[...]' connections='{}'
+
+# 5. Verify
+npx mcporter call "n8n.n8n_validate_workflow(id: 'workflow-id')"
+
+# 6. Iterate
+npx mcporter call n8n.n8n_update_partial_workflow id=workflow-id operations='[...]'
+
+# 7. Go live!
+npx mcporter call n8n.n8n_update_partial_workflow id=workflow-id operations='[{"type":"activateWorkflow"}]'
+```
 
 For details, see:
 - [SEARCH_GUIDE.md](SEARCH_GUIDE.md) - Node discovery

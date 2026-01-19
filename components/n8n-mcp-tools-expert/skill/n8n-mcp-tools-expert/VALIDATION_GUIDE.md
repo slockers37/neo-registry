@@ -1,6 +1,6 @@
 # Configuration Validation Tools Guide
 
-Complete guide for validating node configurations and workflows.
+Complete guide for validating node configurations and workflows via mcporter.
 
 ---
 
@@ -22,18 +22,17 @@ The `validate_node` tool provides all validation capabilities with different mod
 
 **Use when**: Checking what fields are required
 
-```javascript
-validate_node({
-  nodeType: "nodes-base.slack",
-  config: {},  // Empty to see all required fields
-  mode: "minimal"
-})
+```bash
+npx mcporter call n8n.validate_node \
+  nodeType=nodes-base.slack \
+  config='{}' \
+  mode=minimal
 ```
 
 **Returns**:
-```javascript
+```json
 {
-  "valid": true,           // Usually true (most nodes have no strict requirements)
+  "valid": true,
   "missingRequiredFields": []
 }
 ```
@@ -46,17 +45,11 @@ validate_node({
 
 **Use when**: Validating actual configuration before deployment
 
-```javascript
-validate_node({
-  nodeType: "nodes-base.slack",
-  config: {
-    resource: "channel",
-    operation: "create",
-    channel: "general"
-  },
-  profile: "runtime"  // Recommended!
-})
-// mode="full" is the default
+```bash
+npx mcporter call n8n.validate_node \
+  nodeType=nodes-base.slack \
+  config='{"resource":"channel","operation":"create","channel":"general"}' \
+  profile=runtime
 ```
 
 ---
@@ -89,7 +82,7 @@ Choose based on your stage:
 
 ## Validation Response
 
-```javascript
+```json
 {
   "nodeType": "nodes-base.slack",
   "workflowNodeType": "n8n-nodes-base.slack",
@@ -137,20 +130,10 @@ Choose based on your stage:
 
 **Use when**: Checking complete workflow before execution
 
-**Syntax**:
-```javascript
-validate_workflow({
-  workflow: {
-    nodes: [...],        // Array of nodes
-    connections: {...}   // Connections object
-  },
-  options: {
-    validateNodes: true,       // Default: true
-    validateConnections: true, // Default: true
-    validateExpressions: true, // Default: true
-    profile: "runtime"         // For node validation
-  }
-})
+```bash
+npx mcporter call n8n.validate_workflow \
+  workflow='{"nodes":[...],"connections":{...}}' \
+  options='{"validateNodes":true,"validateConnections":true,"validateExpressions":true,"profile":"runtime"}'
 ```
 
 **Validates**:
@@ -164,17 +147,10 @@ validate_workflow({
 
 ### Validate by Workflow ID
 
-```javascript
-// Validate workflow already in n8n
-n8n_validate_workflow({
-  id: "workflow-id",
-  options: {
-    validateNodes: true,
-    validateConnections: true,
-    validateExpressions: true,
-    profile: "runtime"
-  }
-})
+```bash
+npx mcporter call n8n.n8n_validate_workflow \
+  id=workflow-id \
+  options='{"validateNodes":true,"validateConnections":true,"validateExpressions":true,"profile":"runtime"}'
 ```
 
 ---
@@ -196,29 +172,20 @@ n8n_validate_workflow({
 ```
 
 **Example**:
-```javascript
-// Iteration 1
-let config = {
-  resource: "channel",
-  operation: "create"
-};
+```bash
+# Iteration 1
+npx mcporter call n8n.validate_node \
+  nodeType=nodes-base.slack \
+  config='{"resource":"channel","operation":"create"}' \
+  profile=runtime
+# → Error: Missing "name"
 
-const result1 = validate_node({
-  nodeType: "nodes-base.slack",
-  config,
-  profile: "runtime"
-});
-// → Error: Missing "name"
-
-// Iteration 2 (~58s later)
-config.name = "general";
-
-const result2 = validate_node({
-  nodeType: "nodes-base.slack",
-  config,
-  profile: "runtime"
-});
-// → Valid!
+# Iteration 2 (~58s later, after adding name)
+npx mcporter call n8n.validate_node \
+  nodeType=nodes-base.slack \
+  config='{"resource":"channel","operation":"create","name":"general"}' \
+  profile=runtime
+# → Valid!
 ```
 
 ---
@@ -239,26 +206,9 @@ const result2 = validate_node({
 - Branch count mismatches (3 Switch rules but only 2 outputs)
 - Paradoxical corrupt states (API returns corrupt, rejects updates)
 
-**Example**:
-```javascript
-// Before auto-sanitization
-{
-  "type": "boolean",
-  "operation": "equals",
-  "singleValue": true  // Binary operators shouldn't have this
-}
-
-// After auto-sanitization (automatic!)
-{
-  "type": "boolean",
-  "operation": "equals"
-  // singleValue removed automatically
-}
-```
-
 **Recovery tools**:
 - `cleanStaleConnections` operation - removes broken connections
-- `n8n_autofix_workflow({id})` - preview/apply fixes
+- `n8n_autofix_workflow` - preview/apply fixes
 
 ---
 
@@ -266,19 +216,17 @@ const result2 = validate_node({
 
 **Use when**: Validation errors need automatic fixes
 
-```javascript
-// Preview fixes (default - doesn't apply)
-n8n_autofix_workflow({
-  id: "workflow-id",
-  applyFixes: false,  // Preview mode
-  confidenceThreshold: "medium"  // high, medium, low
-})
+```bash
+# Preview fixes (default - doesn't apply)
+npx mcporter call n8n.n8n_autofix_workflow \
+  id=workflow-id \
+  applyFixes=false \
+  confidenceThreshold=medium
 
-// Apply fixes
-n8n_autofix_workflow({
-  id: "workflow-id",
-  applyFixes: true
-})
+# Apply fixes
+npx mcporter call n8n.n8n_autofix_workflow \
+  id=workflow-id \
+  applyFixes=true
 ```
 
 **Fix Types**:
@@ -355,7 +303,7 @@ Use **ai-friendly** profile to reduce false positives.
 - Fix errors immediately (avg 58s)
 - Iterate validation loop
 - Trust auto-sanitization for operator issues
-- Use `mode: "minimal"` for quick checks
+- Use `mode=minimal` for quick checks
 - Use `n8n_autofix_workflow` for bulk fixes
 - Activate workflows via API when ready (`activateWorkflow` operation)
 
@@ -371,51 +319,32 @@ Use **ai-friendly** profile to reduce false positives.
 
 ## Example: Complete Validation Workflow
 
-```javascript
-// Step 1: Get node requirements (quick check)
-validate_node({
-  nodeType: "nodes-base.slack",
-  config: {},
-  mode: "minimal"
-});
-// → Know what's required
+```bash
+# Step 1: Get node requirements (quick check)
+npx mcporter call n8n.validate_node \
+  nodeType=nodes-base.slack \
+  config='{}' \
+  mode=minimal
+# → Know what's required
 
-// Step 2: Configure node
-const config = {
-  resource: "message",
-  operation: "post",
-  channel: "#general",
-  text: "Hello!"
-};
+# Step 2: Configure node (in your code/workflow)
 
-// Step 3: Validate configuration (full validation)
-const result = validate_node({
-  nodeType: "nodes-base.slack",
-  config,
-  profile: "runtime"
-});
+# Step 3: Validate configuration (full validation)
+npx mcporter call n8n.validate_node \
+  nodeType=nodes-base.slack \
+  config='{"resource":"message","operation":"post","channel":"#general","text":"Hello!"}' \
+  profile=runtime
 
-// Step 4: Check result
-if (result.valid) {
-  console.log("Configuration valid!");
-} else {
-  console.log("Errors:", result.errors);
-  // Fix and validate again
-}
+# Step 4: Check result - if valid, continue; if not, fix and retry
 
-// Step 5: Validate in workflow context
-validate_workflow({
-  workflow: {
-    nodes: [{...config as node...}],
-    connections: {...}
-  }
-});
+# Step 5: Validate in workflow context
+npx mcporter call n8n.validate_workflow \
+  workflow='{"nodes":[...],"connections":{...}}'
 
-// Step 6: Apply auto-fixes if needed
-n8n_autofix_workflow({
-  id: "workflow-id",
-  applyFixes: true
-});
+# Step 6: Apply auto-fixes if needed
+npx mcporter call n8n.n8n_autofix_workflow \
+  id=workflow-id \
+  applyFixes=true
 ```
 
 ---
@@ -431,11 +360,11 @@ n8n_autofix_workflow({
 6. Use `n8n_autofix_workflow` for automatic fixes
 
 **Tool Selection**:
-- **validate_node({mode: "minimal"})**: Quick required fields check
-- **validate_node({profile: "runtime"})**: Full config validation (**use this!**)
+- **validate_node (mode=minimal)**: Quick required fields check
+- **validate_node (profile=runtime)**: Full config validation (**use this!**)
 - **validate_workflow**: Complete workflow check
-- **n8n_validate_workflow({id})**: Validate existing workflow
-- **n8n_autofix_workflow({id})**: Auto-fix common issues
+- **n8n_validate_workflow (id=...)**: Validate existing workflow
+- **n8n_autofix_workflow (id=...)**: Auto-fix common issues
 
 **Related**:
 - [SEARCH_GUIDE.md](SEARCH_GUIDE.md) - Find nodes
