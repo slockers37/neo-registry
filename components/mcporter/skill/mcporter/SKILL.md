@@ -1,6 +1,7 @@
 ---
 name: mcporter
-description: Unified MCP server management via MCPorter - discover tools, call MCP servers, manage config, handle OAuth, generate standalone CLIs. Use when working with MCP servers or needing to call MCP tools.
+description: Unified MCP server management via MCPorter. Use for web research with Tavily (search, extract, crawl), NotebookLM operations (notebooks, podcasts, research, chat), and any MCP tool calls. Handles discovery, calling, config, OAuth, and CLI generation.
+argument-hint: Use for Tavily search/research, NotebookLM notebooks/podcasts, or any MCP server operations.
 ---
 
 <essential_principles>
@@ -51,12 +52,21 @@ What do you need help with?
 | 4, "oauth", "auth", "login", "401", "403" | workflows/handle-oauth.md |
 | 5, "generate", "cli", "standalone", "emit" | workflows/generate-cli.md |
 
+**MCP-specific routing (auto-detect):**
+| Intent | Workflow |
+|--------|----------|
+| "search", "research", "crawl", "extract", "tavily" | workflows/tavily.md |
+| "notebook", "notebooklm", "podcast", "audio overview", "chat with notebook" | workflows/notebooklm.md |
+
 **Intent-based routing:**
 - "mcporter call X" → Execute directly, use call syntax from quick reference
 - "list tools from firecrawl" → workflows/discover-tools.md
 - "add a new MCP server" → workflows/manage-config.md
 - "getting 401 errors" → workflows/handle-oauth.md
 - "create CLI for tavily" → workflows/generate-cli.md
+- "search for AI news" → workflows/tavily.md
+- "create a notebook" → workflows/notebooklm.md
+- "generate podcast from sources" → workflows/notebooklm.md
 
 **After reading the workflow, follow it exactly.**
 </routing>
