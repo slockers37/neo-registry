@@ -1,0 +1,25 @@
+{
+  "name": "mcporter",
+  "versions": {
+    "1.0.0": {
+      "name": "mcporter",
+      "type": "ocx:skill",
+      "description": "Unified MCP server management - discover tools, call servers, manage config, handle OAuth, generate CLIs",
+      "files": [
+        "skill/mcporter/SKILL.md",
+        "skill/mcporter/workflows/discover-tools.md",
+        "skill/mcporter/workflows/call-tools.md",
+        "skill/mcporter/workflows/manage-config.md",
+        "skill/mcporter/workflows/handle-oauth.md",
+        "skill/mcporter/workflows/generate-cli.md",
+        "skill/mcporter/references/command-reference.md",
+        "skill/mcporter/references/config-schema.md",
+        "skill/mcporter/references/typescript-api.md"
+      ],
+      "dependencies": []
+    }
+  },
+  "dist-tags": {
+    "latest": "1.0.0"
+  }
+}
