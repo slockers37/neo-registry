@@ -12,8 +12,6 @@
         "skill/mcporter/workflows/manage-config.md",
         "skill/mcporter/workflows/handle-oauth.md",
         "skill/mcporter/workflows/generate-cli.md",
-        "skill/mcporter/workflows/tavily.md",
-        "skill/mcporter/workflows/notebooklm.md",
         "skill/mcporter/references/command-reference.md",
         "skill/mcporter/references/config-schema.md",
         "skill/mcporter/references/typescript-api.md"

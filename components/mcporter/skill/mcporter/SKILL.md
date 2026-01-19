@@ -52,21 +52,9 @@ What do you need help with?
 | 4, "oauth", "auth", "login", "401", "403" | workflows/handle-oauth.md |
 | 5, "generate", "cli", "standalone", "emit" | workflows/generate-cli.md |
 
-**MCP-specific routing (auto-detect):**
-| Intent | Workflow |
-|--------|----------|
-| "search", "research", "crawl", "extract", "tavily" | workflows/tavily.md |
-| "notebook", "notebooklm", "podcast", "audio overview", "chat with notebook" | workflows/notebooklm.md |
-
-**Intent-based routing:**
-- "mcporter call X" → Execute directly, use call syntax from quick reference
-- "list tools from firecrawl" → workflows/discover-tools.md
-- "add a new MCP server" → workflows/manage-config.md
-- "getting 401 errors" → workflows/handle-oauth.md
-- "create CLI for tavily" → workflows/generate-cli.md
-- "search for AI news" → workflows/tavily.md
-- "create a notebook" → workflows/notebooklm.md
-- "generate podcast from sources" → workflows/notebooklm.md
+**For any MCP tool usage (Tavily, NotebookLM, etc.):**
+1. Discover: `npx mcporter list <server> --schema` to get tool definitions
+2. Call: `npx mcporter call server.tool arg=value`
 
 **After reading the workflow, follow it exactly.**
 </routing>
