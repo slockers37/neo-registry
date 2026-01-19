@@ -19,6 +19,7 @@
     { "name": "create-agent-skills", "type": "ocx:skill", "description": "Create and refine OpenCode skills" },
     { "name": "ocx", "type": "ocx:skill", "description": "Manage OpenCode components - install, registries, ghost mode" },
     { "name": "mcporter", "type": "ocx:skill", "description": "Unified MCP server management - discover, call, config, OAuth, CLI generation" },
+    { "name": "agent-browser", "type": "ocx:skill", "description": "Browser automation for AI agents - navigation, forms, screenshots, scraping" },
     { "name": "n8n", "type": "ocx:skill", "description": "Interact with n8n workflows via MCP" },
     { "name": "n8n-code-javascript", "type": "ocx:skill", "description": "JavaScript Code node patterns and best practices" },
     { "name": "n8n-code-python", "type": "ocx:skill", "description": "Python Code node patterns and best practices" },
