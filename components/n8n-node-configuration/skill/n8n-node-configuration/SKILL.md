@@ -1,13 +1,6 @@
 ---
 name: n8n-node-configuration
 description: Operation-aware node configuration guidance. Use when configuring nodes, understanding property dependencies, determining required fields, choosing between get_node detail levels, or learning common configuration patterns by node type.
-mcp:
-  n8n:
-    command: npx
-    args: ["-y", "n8n-mcp"]
-    env:
-      N8N_API_URL: ${N8N_API_URL}
-      N8N_API_KEY: ${N8N_API_KEY}
 ---
 
 # n8n Node Configuration
@@ -50,12 +43,10 @@ Configuration best practices:
   "resource": "message",
   "operation": "update",
   "messageId": "123",     // Required for update (different!)
-  "text": "Updated!"      // Required for update
+  "text": "Updated!"
   // channel NOT required for update
 }
 ```
-
-**Key**: Resource + operation determine which fields are required!
 
 ### 2. Property Dependencies
 
@@ -75,31 +66,28 @@ Configuration best practices:
   "method": "POST",
   "url": "https://api.example.com",
   "sendBody": true,       // Now visible!
-  "body": {               // Required when sendBody=true
-    "contentType": "json",
-    "content": {...}
-  }
+  "body": {...}           // Required when sendBody=true
 }
 ```
-
-**Mechanism**: displayOptions control field visibility
 
 ### 3. Progressive Discovery
 
 **Use the right detail level**:
 
-1. **get_node({detail: "standard"})** - DEFAULT
-   - Quick overview (~1-2K tokens)
-   - Required fields + common options
-   - **Use first** - covers 95% of needs
+1. **get_node (standard)** - DEFAULT (~1-2K tokens)
+   ```bash
+   npx mcporter call "n8n.get_node(nodeType: 'nodes-base.slack')"
+   ```
 
-2. **get_node({mode: "search_properties", propertyQuery: "..."})** (for finding specific fields)
-   - Find properties by name
-   - Use when looking for auth, body, headers, etc.
+2. **get_node (search_properties)** - Find specific fields
+   ```bash
+   npx mcporter call n8n.get_node nodeType=nodes-base.httpRequest mode=search_properties propertyQuery=auth
+   ```
 
-3. **get_node({detail: "full"})** (complete schema)
-   - All properties (~3-8K tokens)
-   - Use only when standard detail is insufficient
+3. **get_node (full)** - Complete schema (~3-8K tokens, use sparingly)
+   ```bash
+   npx mcporter call "n8n.get_node(nodeType: 'nodes-base.slack', detail: 'full')"
+   ```
 
 ---
 
@@ -111,12 +99,14 @@ Configuration best practices:
 1. Identify node type and operation
    ↓
 2. Use get_node (standard detail is default)
+   npx mcporter call "n8n.get_node(nodeType: 'nodes-base.slack')"
    ↓
 3. Configure required fields
    ↓
 4. Validate configuration
+   npx mcporter call n8n.validate_node nodeType=nodes-base.slack config='{...}' profile=runtime
    ↓
-5. If field unclear → get_node({mode: "search_properties"})
+5. If field unclear → search_properties mode
    ↓
 6. Add optional fields as needed
    ↓
@@ -127,18 +117,12 @@ Configuration best practices:
 
 ### Example: Configuring HTTP Request
 
-**Step 1**: Identify what you need
-```javascript
-// Goal: POST JSON to API
-```
+**Step 1**: Identify what you need (POST JSON to API)
 
 **Step 2**: Get node info
-```javascript
-const info = get_node({
-  nodeType: "nodes-base.httpRequest"
-});
-
-// Returns: method, url, sendBody, body, authentication required/optional
+```bash
+npx mcporter call "n8n.get_node(nodeType: 'nodes-base.httpRequest')"
+# Returns: method, url, sendBody, body, authentication required/optional
 ```
 
 **Step 3**: Minimal config
@@ -151,52 +135,15 @@ const info = get_node({
 ```
 
 **Step 4**: Validate
-```javascript
-validate_node({
-  nodeType: "nodes-base.httpRequest",
-  config,
-  profile: "runtime"
-});
-// → Error: "sendBody required for POST"
+```bash
+npx mcporter call n8n.validate_node nodeType=nodes-base.httpRequest config='{"method":"POST","url":"https://api.example.com"}' profile=runtime
+# → Error: "sendBody required for POST"
 ```
 
-**Step 5**: Add required field
-```javascript
-{
-  "method": "POST",
-  "url": "https://api.example.com/create",
-  "authentication": "none",
-  "sendBody": true
-}
-```
-
-**Step 6**: Validate again
-```javascript
-validate_node({...});
-// → Error: "body required when sendBody=true"
-```
-
-**Step 7**: Complete configuration
-```javascript
-{
-  "method": "POST",
-  "url": "https://api.example.com/create",
-  "authentication": "none",
-  "sendBody": true,
-  "body": {
-    "contentType": "json",
-    "content": {
-      "name": "={{$json.name}}",
-      "email": "={{$json.email}}"
-    }
-  }
-}
-```
-
-**Step 8**: Final validation
-```javascript
-validate_node({...});
-// → Valid! ✅
+**Step 5**: Add required field, validate again
+```bash
+npx mcporter call n8n.validate_node nodeType=nodes-base.httpRequest config='{"method":"POST","url":"...","sendBody":true,"body":{"contentType":"json","content":{}}}' profile=runtime
+# → Valid! ✅
 ```
 
 ---
@@ -205,177 +152,51 @@ validate_node({...});
 
 ### Standard Detail (DEFAULT - Use This!)
 
-**✅ Starting configuration**
-```javascript
-get_node({
-  nodeType: "nodes-base.slack"
-});
-// detail="standard" is the default
+**Speed**: <10ms | **Size**: ~1-2K tokens
+
+```bash
+npx mcporter call "n8n.get_node(nodeType: 'nodes-base.slack')"
+# detail="standard" is the default
 ```
 
-**Returns** (~1-2K tokens):
-- Required fields
-- Common options
-- Operation list
-- Metadata
+**Returns**: Required fields, common options, operation list, metadata
 
 **Use**: 95% of configuration needs
 
 ### Full Detail (Use Sparingly)
 
-**✅ When standard isn't enough**
-```javascript
-get_node({
-  nodeType: "nodes-base.slack",
-  detail: "full"
-});
-```
+**Speed**: <100ms | **Size**: ~3-8K tokens
 
-**Returns** (~3-8K tokens):
-- Complete schema
-- All properties
-- All nested options
+```bash
+npx mcporter call "n8n.get_node(nodeType: 'nodes-base.slack', detail: 'full')"
+```
 
 **Warning**: Large response, use only when standard insufficient
 
 ### Search Properties Mode
 
-**✅ Looking for specific field**
-```javascript
-get_node({
-  nodeType: "nodes-base.httpRequest",
-  mode: "search_properties",
-  propertyQuery: "auth"
-});
+**Use when**: Looking for specific field
+
+```bash
+npx mcporter call n8n.get_node nodeType=nodes-base.httpRequest mode=search_properties propertyQuery=auth
 ```
 
-**Use**: Find authentication, headers, body fields, etc.
+**Common searches**: auth, header, body, json, url, method, credential
 
 ### Decision Tree
 
 ```
-┌─────────────────────────────────┐
-│ Starting new node config?       │
-├─────────────────────────────────┤
-│ YES → get_node (standard)       │
-└─────────────────────────────────┘
-         ↓
-┌─────────────────────────────────┐
-│ Standard has what you need?     │
-├─────────────────────────────────┤
-│ YES → Configure with it         │
-│ NO  → Continue                  │
-└─────────────────────────────────┘
-         ↓
-┌─────────────────────────────────┐
-│ Looking for specific field?     │
-├─────────────────────────────────┤
-│ YES → search_properties mode    │
-│ NO  → Continue                  │
-└─────────────────────────────────┘
-         ↓
-┌─────────────────────────────────┐
-│ Still need more details?        │
-├─────────────────────────────────┤
-│ YES → get_node({detail: "full"})│
-└─────────────────────────────────┘
+Starting new node config?
+  → npx mcporter call "n8n.get_node(nodeType: '...')"
+     ↓
+Standard has what you need?
+  → YES: Configure with it
+  → NO: Continue
+     ↓
+Looking for specific field?
+  → YES: mode=search_properties
+  → NO: detail=full
 ```
-
----
-
-## Property Dependencies Deep Dive
-
-### displayOptions Mechanism
-
-**Fields have visibility rules**:
-
-```javascript
-{
-  "name": "body",
-  "displayOptions": {
-    "show": {
-      "sendBody": [true],
-      "method": ["POST", "PUT", "PATCH"]
-    }
-  }
-}
-```
-
-**Translation**: "body" field shows when:
-- sendBody = true AND
-- method = POST, PUT, or PATCH
-
-### Common Dependency Patterns
-
-#### Pattern 1: Boolean Toggle
-
-**Example**: HTTP Request sendBody
-```javascript
-// sendBody controls body visibility
-{
-  "sendBody": true   // → body field appears
-}
-```
-
-#### Pattern 2: Operation Switch
-
-**Example**: Slack resource/operation
-```javascript
-// Different operations → different fields
-{
-  "resource": "message",
-  "operation": "post"
-  // → Shows: channel, text, attachments, etc.
-}
-
-{
-  "resource": "message",
-  "operation": "update"
-  // → Shows: messageId, text (different fields!)
-}
-```
-
-#### Pattern 3: Type Selection
-
-**Example**: IF node conditions
-```javascript
-{
-  "type": "string",
-  "operation": "contains"
-  // → Shows: value1, value2
-}
-
-{
-  "type": "boolean",
-  "operation": "equals"
-  // → Shows: value1, value2, different operators
-}
-```
-
-### Finding Property Dependencies
-
-**Use get_node with search_properties mode**:
-```javascript
-get_node({
-  nodeType: "nodes-base.httpRequest",
-  mode: "search_properties",
-  propertyQuery: "body"
-});
-
-// Returns property paths matching "body" with descriptions
-```
-
-**Or use full detail for complete schema**:
-```javascript
-get_node({
-  nodeType: "nodes-base.httpRequest",
-  detail: "full"
-});
-
-// Returns complete schema with displayOptions rules
-```
-
-**Use this when**: Validation fails and you don't understand why field is missing/required
 
 ---
 
@@ -385,7 +206,6 @@ get_node({
 
 **Examples**: Slack, Google Sheets, Airtable
 
-**Structure**:
 ```javascript
 {
   "resource": "<entity>",      // What type of thing
@@ -394,17 +214,10 @@ get_node({
 }
 ```
 
-**How to configure**:
-1. Choose resource
-2. Choose operation
-3. Use get_node to see operation-specific requirements
-4. Configure required fields
-
 ### Pattern 2: HTTP-Based Nodes
 
 **Examples**: HTTP Request, Webhook
 
-**Structure**:
 ```javascript
 {
   "method": "<HTTP_METHOD>",
@@ -423,14 +236,6 @@ get_node({
 
 **Examples**: Postgres, MySQL, MongoDB
 
-**Structure**:
-```javascript
-{
-  "operation": "<query|insert|update|delete>",
-  // ... operation-specific fields
-}
-```
-
 **Dependencies**:
 - operation="executeQuery" → query required
 - operation="insert" → table + values required
@@ -440,30 +245,15 @@ get_node({
 
 **Examples**: IF, Switch, Merge
 
-**Structure**:
-```javascript
-{
-  "conditions": {
-    "<type>": [
-      {
-        "operation": "<operator>",
-        "value1": "...",
-        "value2": "..."  // Only for binary operators
-      }
-    ]
-  }
-}
-```
-
 **Dependencies**:
-- Binary operators (equals, contains, etc.) → value1 + value2
+- Binary operators (equals, contains) → value1 + value2
 - Unary operators (isEmpty, isNotEmpty) → value1 only + singleValue: true
 
 ---
 
-## Operation-Specific Configuration
+## Operation-Specific Configuration Examples
 
-### Slack Node Examples
+### Slack Node
 
 #### Post Message
 ```javascript
@@ -471,9 +261,7 @@ get_node({
   "resource": "message",
   "operation": "post",
   "channel": "#general",      // Required
-  "text": "Hello!",           // Required
-  "attachments": [],          // Optional
-  "blocks": []                // Optional
+  "text": "Hello!"            // Required
 }
 ```
 
@@ -483,40 +271,18 @@ get_node({
   "resource": "message",
   "operation": "update",
   "messageId": "1234567890",  // Required (different from post!)
-  "text": "Updated!",         // Required
-  "channel": "#general"       // Optional (can be inferred)
+  "text": "Updated!"          // Required
 }
 ```
 
-#### Create Channel
-```javascript
-{
-  "resource": "channel",
-  "operation": "create",
-  "name": "new-channel",      // Required
-  "isPrivate": false          // Optional
-  // Note: text NOT required for this operation
-}
-```
-
-### HTTP Request Node Examples
+### HTTP Request Node
 
 #### GET Request
 ```javascript
 {
   "method": "GET",
   "url": "https://api.example.com/users",
-  "authentication": "predefinedCredentialType",
-  "nodeCredentialType": "httpHeaderAuth",
-  "sendQuery": true,                    // Optional
-  "queryParameters": {                  // Shows when sendQuery=true
-    "parameters": [
-      {
-        "name": "limit",
-        "value": "100"
-      }
-    ]
-  }
+  "authentication": "predefinedCredentialType"
 }
 ```
 
@@ -525,31 +291,25 @@ get_node({
 {
   "method": "POST",
   "url": "https://api.example.com/users",
-  "authentication": "none",
-  "sendBody": true,                     // Required for POST
-  "body": {                             // Required when sendBody=true
+  "sendBody": true,
+  "body": {
     "contentType": "json",
-    "content": {
-      "name": "John Doe",
-      "email": "john@example.com"
-    }
+    "content": {"name": "John", "email": "john@example.com"}
   }
 }
 ```
 
-### IF Node Examples
+### IF Node
 
 #### String Comparison (Binary)
 ```javascript
 {
   "conditions": {
-    "string": [
-      {
-        "value1": "={{$json.status}}",
-        "operation": "equals",
-        "value2": "active"              // Binary: needs value2
-      }
-    ]
+    "string": [{
+      "value1": "={{$json.status}}",
+      "operation": "equals",
+      "value2": "active"              // Binary: needs value2
+    }]
   }
 }
 ```
@@ -558,70 +318,14 @@ get_node({
 ```javascript
 {
   "conditions": {
-    "string": [
-      {
-        "value1": "={{$json.email}}",
-        "operation": "isEmpty",
-        // No value2 - unary operator
-        "singleValue": true             // Auto-added by sanitization
-      }
-    ]
+    "string": [{
+      "value1": "={{$json.email}}",
+      "operation": "isEmpty"
+      // No value2 - unary operator
+      // singleValue: true (auto-added by sanitization)
+    }]
   }
 }
-```
-
----
-
-## Handling Conditional Requirements
-
-### Example: HTTP Request Body
-
-**Scenario**: body field required, but only sometimes
-
-**Rule**:
-```
-body is required when:
-  - sendBody = true AND
-  - method IN (POST, PUT, PATCH, DELETE)
-```
-
-**How to discover**:
-```javascript
-// Option 1: Read validation error
-validate_node({...});
-// Error: "body required when sendBody=true"
-
-// Option 2: Search for the property
-get_node({
-  nodeType: "nodes-base.httpRequest",
-  mode: "search_properties",
-  propertyQuery: "body"
-});
-// Shows: body property with displayOptions rules
-
-// Option 3: Try minimal config and iterate
-// Start without body, validation will tell you if needed
-```
-
-### Example: IF Node singleValue
-
-**Scenario**: singleValue property appears for unary operators
-
-**Rule**:
-```
-singleValue should be true when:
-  - operation IN (isEmpty, isNotEmpty, true, false)
-```
-
-**Good news**: Auto-sanitization fixes this!
-
-**Manual check**:
-```javascript
-get_node({
-  nodeType: "nodes-base.if",
-  detail: "full"
-});
-// Shows complete schema with operator-specific rules
 ```
 
 ---
@@ -630,80 +334,39 @@ get_node({
 
 ### ❌ Don't: Over-configure Upfront
 
-**Bad**:
 ```javascript
-// Adding every possible field
+// BAD: Adding every possible field
 {
   "method": "GET",
-  "url": "...",
   "sendQuery": false,
   "sendHeaders": false,
   "sendBody": false,
   "timeout": 10000,
-  "ignoreResponseCode": false,
   // ... 20 more optional fields
 }
-```
 
-**Good**:
-```javascript
-// Start minimal
+// GOOD: Start minimal
 {
   "method": "GET",
   "url": "...",
   "authentication": "none"
 }
-// Add fields only when needed
 ```
 
 ### ❌ Don't: Skip Validation
 
-**Bad**:
-```javascript
-// Configure and deploy without validating
-const config = {...};
-n8n_update_partial_workflow({...});  // YOLO
-```
+```bash
+# BAD: Deploy without validating
+npx mcporter call n8n.n8n_update_partial_workflow ...  # YOLO
 
-**Good**:
-```javascript
-// Validate before deploying
-const config = {...};
-const result = validate_node({...});
-if (result.valid) {
-  n8n_update_partial_workflow({...});
-}
+# GOOD: Validate before deploying
+npx mcporter call n8n.validate_node nodeType=... config='{...}' profile=runtime
+# Then deploy if valid
 ```
 
 ### ❌ Don't: Ignore Operation Context
 
-**Bad**:
-```javascript
-// Same config for all Slack operations
-{
-  "resource": "message",
-  "operation": "post",
-  "channel": "#general",
-  "text": "..."
-}
-
-// Then switching operation without updating config
-{
-  "resource": "message",
-  "operation": "update",  // Changed
-  "channel": "#general",  // Wrong field for update!
-  "text": "..."
-}
-```
-
-**Good**:
-```javascript
-// Check requirements when changing operation
-get_node({
-  nodeType: "nodes-base.slack"
-});
-// See what update operation needs (messageId, not channel)
-```
+Different operations need different fields! Always check get_node when changing operation.
 
 ---
 
@@ -711,70 +374,27 @@ get_node({
 
 ### ✅ Do
 
-1. **Start with get_node (standard detail)**
-   - ~1-2K tokens response
-   - Covers 95% of configuration needs
-   - Default detail level
-
-2. **Validate iteratively**
-   - Configure → Validate → Fix → Repeat
-   - Average 2-3 iterations is normal
-   - Read validation errors carefully
-
-3. **Use search_properties mode when stuck**
-   - If field seems missing, search for it
-   - Understand what controls field visibility
-   - `get_node({mode: "search_properties", propertyQuery: "..."})`
-
-4. **Respect operation context**
-   - Different operations = different requirements
-   - Always check get_node when changing operation
-   - Don't assume configs are transferable
-
-5. **Trust auto-sanitization**
-   - Operator structure fixed automatically
-   - Don't manually add/remove singleValue
-   - IF/Switch metadata added on save
+1. **Start with get_node (standard detail)** - ~1-2K tokens, covers 95% of needs
+2. **Validate iteratively** - Configure → Validate → Fix → Repeat
+3. **Use search_properties mode when stuck** - Find specific fields
+4. **Respect operation context** - Different operations = different requirements
+5. **Trust auto-sanitization** - Operator structure fixed automatically
 
 ### ❌ Don't
 
-1. **Jump to detail="full" immediately**
-   - Try standard detail first
-   - Only escalate if needed
-   - Full schema is 3-8K tokens
-
-2. **Configure blindly**
-   - Always validate before deploying
-   - Understand why fields are required
-   - Use search_properties for conditional fields
-
-3. **Copy configs without understanding**
-   - Different operations need different fields
-   - Validate after copying
-   - Adjust for new context
-
-4. **Manually fix auto-sanitization issues**
-   - Let auto-sanitization handle operator structure
-   - Focus on business logic
-   - Save and let system fix structure
-
----
-
-## Detailed References
-
-For comprehensive guides on specific topics:
-
-- **[DEPENDENCIES.md](DEPENDENCIES.md)** - Deep dive into property dependencies and displayOptions
-- **[OPERATION_PATTERNS.md](OPERATION_PATTERNS.md)** - Common configuration patterns by node type
+1. **Jump to detail="full" immediately** - Try standard detail first
+2. **Configure blindly** - Always validate before deploying
+3. **Copy configs without understanding** - Different operations need different fields
+4. **Manually fix auto-sanitization issues** - Let system handle operator structure
 
 ---
 
 ## Summary
 
 **Configuration Strategy**:
-1. Start with `get_node` (standard detail is default)
+1. `npx mcporter call "n8n.get_node(nodeType: '...')"` (standard detail is default)
 2. Configure required fields for operation
-3. Validate configuration
+3. `npx mcporter call n8n.validate_node ...` to validate
 4. Search properties if stuck
 5. Iterate until valid (avg 2-3 cycles)
 6. Deploy with confidence
@@ -789,4 +409,3 @@ For comprehensive guides on specific topics:
 - **n8n MCP Tools Expert** - How to use discovery tools correctly
 - **n8n Validation Expert** - Interpret validation errors
 - **n8n Expression Syntax** - Configure expression fields
-- **n8n Workflow Patterns** - Apply patterns with proper configuration
